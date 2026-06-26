@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GRIT is the weekly scouting report for North American Counter-Strike. We find the players before the orgs do.">
+<title>News | GRIT</title>
+<link rel="icon" href="grit-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <span class="ticker-track">
+    GRIT &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; GRIND. READ. IMPROVE. TRACK. &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; WE FIND THE PLAYERS BEFORE THE ORGS DO &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; FPL &bull; FPL-C &bull; ESEA ADVANCED &bull; ESL CHALLENGER &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; NORTH AMERICAN COUNTER-STRIKE &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; READGRIT.US &nbsp;<span class="ticker-sep">&bull;</span>&nbsp;
+    GRIT &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; GRIND. READ. IMPROVE. TRACK. &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; WE FIND THE PLAYERS BEFORE THE ORGS DO &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; FPL &bull; FPL-C &bull; ESEA ADVANCED &bull; ESL CHALLENGER &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; NORTH AMERICAN COUNTER-STRIKE &nbsp;<span class="ticker-sep">&bull;</span>&nbsp; READGRIT.US &nbsp;<span class="ticker-sep">&bull;</span>&nbsp;
+  </span>
+</div>
+
+<header class="masthead" id="home">
+  <div class="mast-top">
+    <span data-today>Today</span>
+    <a href="https://readgrit.substack.com" target="_blank" rel="noopener">Subscribe Free &rarr;</a>
+    <span>readgrit.us &nbsp;&middot;&nbsp; contact@readgrit.us</span>
+  </div>
+  <div class="mast-center">
+    <a href="index.html"><img class="mast-logo" src="grit-logo.png" alt="GRIT logo"></a>
+    <div class="mast-text">
+      <div class="mast-title"><a href="index.html">GRIT</a></div>
+      <div class="mast-meaning">Grind. Read. Improve. Track.</div>
+    </div>
+    <div class="mast-tagline">We find the players before the orgs do.</div>
+  </div>
+</header>
+
+<nav class="strip" role="navigation" aria-label="Main">
+  <a href="index.html">Home</a>
+  <a href="board.html">The Board</a>
+  <a href="news.html" class="active">News</a>
+  <a href="https://readgrit.substack.com" class="external" target="_blank" rel="noopener">Subscribe &rarr;</a>
+</nav>
+
+<main class="page">
+
+  <div class="section-head">
+    <div class="rule"></div>
+    <h2>News &amp; Scene Reports</h2>
+    <div class="rule"></div>
+  </div>
+  <p style="padding: 10px 24px 0; font-size: 13px; font-style: italic; color: var(--muted); max-width: 640px;">
+    Roster moves, tournament coverage, prospect watches, and our read on the state of North American Counter-Strike.
+  </p>
+
+  <div class="cat-filter" id="cat-filters"></div>
+
+  <div class="articles" id="news-articles" style="padding-bottom: 40px;"></div>
+
+  <div id="subscribe">
+    <div class="section-head">
+      <div class="rule"></div>
+      <h2>Get It First</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="subscribe-section">
+      <div class="sub-box">
+        <h3>The Report, In Your <em>Inbox.</em></h3>
+        <p class="sub-deck">Everything here, plus the weekly prospect drop, delivered free every Friday.</p>
+        <div class="sub-form">
+          <input class="sub-input" type="email" id="sub-email" placeholder="your@email.com" aria-label="Email address">
+          <button class="sub-go" onclick="handleSub()">Subscribe</button>
+        </div>
+        <p class="sub-fine">Delivered via <a href="https://readgrit.substack.com" target="_blank" rel="noopener">readgrit.substack.com</a>. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img class="footer-logo" src="grit-logo.png" alt="GRIT">
+      <span class="footer-title">GRIT</span>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://readgrit.substack.com" target="_blank" rel="noopener">Newsletter</a>
+      <a class="footer-link" href="https://twitter.com/readgrit" target="_blank" rel="noopener">X / Twitter</a>
+      <a class="footer-link" href="mailto:contact@readgrit.us">Contact</a>
+    </div>
+    <div class="footer-copy">&copy; <span data-year>2026</span> GRIT &middot; Grind. Read. Improve. Track. &middot; readgrit.us</div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
