@@ -384,3 +384,113 @@ footer { border-top: 3px double var(--rule); margin-top: 44px; }
   .vrs-row { grid-template-columns: 30px 1fr 64px; }
   .vrs-row .r-logo, .vrs-row .r-mono, .vrs-row .r-stat { display: none; }
 }
+
+/* ============================================================
+   GOTHIC RESKIN  —  "Blackletter blacktop"
+   Near-black canvas, gunmetal-silver accents, brushed-metal
+   numerals, blackletter flourishes. Matches the GRIT mark.
+   Appended last so it overrides the risograph layer above.
+   Accessibility kept: high-contrast text, light mode retained.
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  --bg:#0A0A0C; --bg-2:#0D0D10; --surface:#131419; --surface-solid:#131419; --surface-2:#191A20;
+  --ink:#ECEDF0; --ink-soft:#BFC1C9; --muted:#7E808A;
+  --border:#23242B; --rule:rgba(255,255,255,0.20); --hairline:rgba(255,255,255,0.07);
+  --accent:#AEB8C8; --accent-deep:#CFD6E2; --accent-soft:rgba(255,255,255,0.05);
+  --fill:#ECEDF0;
+  --metal:linear-gradient(180deg,#FFFFFF 0%,#C9CFDA 48%,#888F9E 100%);
+  --up:#56C98C; --down:#E0655C;
+  --awp:#7E8CC8; --igl:#C79A5C; --entry:#CE7088; --rifler:#9A9DA8; --support:#56C98C; --lurker:#A78FD8;
+  --grain:0.06;
+  --f-display:'Oswald', system-ui, sans-serif;
+  --f-black:'UnifrakturCook','Oswald',serif;
+  --f-body:'Newsreader', Georgia, serif;
+  --f-mono:'JetBrains Mono', ui-monospace, monospace;
+  --tick:rgba(174,184,200,0.7);
+  color-scheme:dark;
+}
+[data-theme="light"] {
+  --bg:#EEEEF0; --bg-2:#E4E4E8; --surface:#F7F7F9; --surface-solid:#F7F7F9; --surface-2:#E7E7EB;
+  --ink:#15161A; --ink-soft:#33353C; --muted:#6A6C76;
+  --border:#D2D3D9; --rule:rgba(0,0,0,0.22); --hairline:rgba(0,0,0,0.10);
+  --accent:#4A4F5C; --accent-deep:#2C303A; --accent-soft:rgba(0,0,0,0.05);
+  --fill:#15161A;
+  --metal:linear-gradient(180deg,#3A3D45 0%,#1B1D22 60%);
+  --up:#1B8F5A; --down:#C2453C;
+  --grain:0.04;
+  color-scheme:light;
+}
+
+/* canvas: subtle top glow + finer grain */
+body { background:radial-gradient(120% 80% at 50% -15%, #15161D 0%, var(--bg) 55%) fixed; }
+[data-theme="light"] body { background:radial-gradient(120% 80% at 50% -15%, #FFFFFF 0%, var(--bg) 55%) fixed; }
+body::after { mix-blend-mode:screen; opacity:.05; }
+[data-theme="light"] body::after { mix-blend-mode:multiply; opacity:.04; }
+:focus-visible { outline:2px solid var(--fill); outline-offset:2px; }
+::selection { background:var(--fill); color:var(--bg); }
+
+/* panels: sharp, hairline, soft depth */
+.glass { border-color:var(--hairline); border-radius:3px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 16px rgba(0,0,0,.45); }
+[data-theme="light"] .glass { box-shadow:0 1px 3px rgba(0,0,0,.08); }
+
+/* ticker: dark brand band in both themes */
+.ticker { background:#060608; border-bottom:1px solid var(--hairline); }
+.ticker-track { color:#9A9CA5; }
+.ticker-sep { color:var(--accent); }
+[data-theme="dark"] .ticker-sep { color:var(--accent); }
+
+/* masthead: wordmark image replaces text title */
+.masthead { border-bottom:1px solid var(--rule); }
+.mast-brand { display:inline-flex; align-items:center; }
+.mast-wordmark { height:clamp(34px, 6.5vw, 60px); width:auto; display:block; }
+.mast-text { display:flex; flex-direction:column; justify-content:center; }
+.mast-center { gap:20px; }
+[data-theme="light"] .mast-wordmark,
+[data-theme="light"] .footer-logo { filter:invert(1) brightness(.08); }
+footer { border-top:1px solid var(--rule); }
+
+/* brushed-metal numerals (the signature) */
+.feat-rank, .r-num.top3, .pillar .pl, .legend-tier {
+  background:var(--metal); -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--accent);
+}
+/* blackletter drop-cap on the home lead */
+.lead-body p:first-child::first-letter {
+  font-family:var(--f-black); font-weight:400;
+  background:var(--metal); -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--ink);
+}
+/* tier label: bright, with a small blackletter G bullet */
+.tier-band .tl { color:var(--ink); -webkit-text-fill-color:currentColor; }
+.tier-band .tl::before {
+  content:"G"; font-family:var(--f-black); font-weight:400; color:var(--accent);
+  margin-right:9px; opacity:.7; font-size:.92em;
+}
+
+/* monochrome fills: bright plate + dark text */
+.btn { background:var(--fill); color:var(--bg); }
+.btn:hover { background:var(--accent-deep); }
+.btn-ghost { background:transparent; border:1px solid var(--rule); color:var(--ink); }
+.btn-ghost:hover { border-color:var(--fill); color:var(--ink); background:transparent; }
+.chip.on { background:var(--fill); color:var(--bg); border-color:var(--fill); }
+.vt.on { background:var(--fill); color:var(--bg); }
+.view-toggle { border-color:var(--rule); }
+.vt + .vt { border-left-color:var(--rule); }
+.sub-go { background:var(--fill); color:var(--bg); }
+.sub-go:hover { background:var(--accent-deep); }
+nav.strip a.active { background:var(--fill); color:var(--bg); }
+nav.strip a.external:hover { background:var(--fill); color:var(--bg); }
+nav.strip a:hover { background:var(--accent-soft); }
+
+/* display type tuning for Oswald (condensed, so loosen the tight tracking) */
+.section-head h2, .r-name .nm, .feat-name, .post-card h3, .about-block h3,
+.result-line .tname, .legend-name, .pillar .pn, .footer-title { letter-spacing:.005em; }
+.lead-title, .about-hero h1 { letter-spacing:.004em; }
+
+/* logo-over-monogram: clean fallback until real logos are added */
+.r-mono.has-img, .feat-mono.has-img { position:relative; overflow:hidden; }
+.r-mono.has-img img, .feat-mono.has-img img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+  background:var(--surface-2); border-radius:2px;
+}

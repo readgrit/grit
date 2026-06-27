@@ -68,9 +68,10 @@ function fillChrome() {
 
 /* ---- TEAM RANKING ---------------------------------------- */
 function logoOrMono(o) {
+  const mono = esc(monogram(o.name || o.handle));
   return o.logo
-    ? `<img class="r-logo" src="${esc(o.logo)}" alt="${esc(o.name || o.handle)}" loading="lazy">`
-    : `<div class="r-mono">${esc(monogram(o.name || o.handle))}</div>`;
+    ? `<div class="r-mono has-img">${mono}<img class="r-logo" src="${esc(o.logo)}" alt="${esc(o.name || o.handle)}" loading="lazy" onerror="this.remove()"></div>`
+    : `<div class="r-mono">${mono}</div>`;
 }
 function gritTierFor(rank) {
   for (const t of GRIT_TIERS) if (rank <= t.max) return t;
@@ -342,14 +343,14 @@ function initAbout() {
 function initHome() {
   const hero = document.getElementById('home-hero');
   if (!hero) return;
-  const t1 = [...TEAMS].sort((a, b) => a.gritRank - b.gritRank)[0];
+  const t1 = [...TEAMS].filter(t => t.gritRank != null).sort((a, b) => a.gritRank - b.gritRank)[0];
   const p1 = [...PROSPECTS].sort(byRank)[0];
   const teamWrap = document.getElementById('home-feat-team');
   if (teamWrap && t1) teamWrap.innerHTML = `${TICKS}
     <div class="hud-card-label">No.1 Team <span class="tag-no1">GRIT Ranking</span></div>
     <div class="feat-unit">
       <div class="feat-rank">1</div>
-      ${t1.logo ? `<img class="feat-logo" src="${esc(t1.logo)}" alt="${esc(t1.name)}">` : `<div class="feat-mono">${esc(monogram(t1.name))}</div>`}
+      <div class="feat-mono has-img">${esc(monogram(t1.name))}${t1.logo ? `<img src="${esc(t1.logo)}" alt="${esc(t1.name)}" onerror="this.remove()">` : ''}</div>
       <div class="feat-meta"><div class="feat-name">${esc(t1.name)}</div><div class="feat-detail">${esc(t1.region || 'NA')} &middot; ${esc((t1.roster || '').split('·')[0].trim())} +4</div></div>
       <div class="feat-points"><div class="v">${esc(t1.vrsPoints || '—')}</div><div class="l">VRS pts</div></div>
     </div>`;
