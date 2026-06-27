@@ -60,47 +60,59 @@ const ABOUT = {
 
 
 /* ---- NA TEAM RANKING -------------------------------------- */
-/* SAMPLE DATA — replace with your own ranking. Array order = rank. */
+/* Source: HLTV Americas Valve Regional Standings (VRS), 21 Jun 2026,
+   filtered to North American teams and ordered by real VRS points.
+   To refresh: update points/order from hltv.org/valve-ranking, and set
+   each team's prevRank to its position on your LAST update so the
+   movement arrows are accurate. (They are flat now = baseline.)
+   Drop logos in assets/teams/<name>.png — files referenced below.       */
 const TEAMS = [
-  { id:"t1", rank:2, prevRank:2, name:"Wildcard",  logo:"assets/teams/wildcard.png", region:"NA", points:0,
-    roster:"susp · JBa · phantom · Sonic · oily", streak:["w","w","w","l","w"],
-    note:"Top of the region and the only NA side troubling tier-one abroad." },
-  { id:"t2", rank:1, prevRank:1, name:"M80",       logo:"assets/teams/m80.png", region:"NA", points:0,
-    roster:"slaxz- · reck · Swisher · s1n · Lake", streak:["w","l","w","w","l"],
-    note:"Slipped a spot after a soft event but firmly in the conversation." },
-  { id:"t4", rank:4, prevRank:6, name:"NRG",        logo:"", region:"NA", points:0,
-    roster:"FaNg · ELITSHOT · oODLES · BnTeT · crashies", streak:["w","w","w","w","l"],
-    note:"Biggest riser this update — four-map run through the open circuit." },
-  { id:"t5", rank:5, prevRank:4, name:"Nouns",      logo:"", region:"NA", points:0,
-    roster:"Pollen · n0rb3r7 · daps · slebog · mada", streak:["l","w","l","w","w"],
-    note:"Project roster with real upside; consistency is the missing piece." },
-  { id:"t6", rank:6, prevRank:5, name:"Liquid",     logo:"", region:"NA", points:0,
-    roster:"NAF · ultimate · jks · siuhy · ne0sd", streak:["l","l","w","w","l"],
-    note:"Rebuild year. Flashes of the old form, not yet the floor." },
-  { id:"t7", rank:7, prevRank:9, name:"Take Flyte",  logo:"", region:"NA", points:0,
-    roster:"vanity · Sl3n · aqua · rh1no · grimble", streak:["w","w","l","w","w"],
-    note:"Challenger grinders climbing on a strong qualifier run." },
-  { id:"t8", rank:8, prevRank:null, name:"BOSS",     logo:"", region:"NA", points:0,
-    roster:"oSee · Walco · floppy · junior · Infinite", streak:["w","w","w","l","w"],
-    note:"New to the ranking — an all-prospect lineup pulled off our board." }
+  { id:"t1", rank:1, prevRank:1, name:"M80", logo:"assets/teams/m80.png", region:"NA", points:1405,
+    roster:"slaxz- · Swisher · s1n · JBa · Lake", streak:["w","l"],
+    note:"Top of the NA VRS table and through to Major Stage 2 after the all-NA derby." },
+  { id:"t2", rank:2, prevRank:2, name:"Wildcard", logo:"assets/teams/wildcard.png", region:"NA", points:1349,
+    roster:"nEMANHA · mhL · Cxzi · reck · HexT", streak:[],
+    note:"NA's other Major mainstay; JBa's development remains the storyline." },
+  { id:"t3", rank:3, prevRank:3, name:"Liquid", logo:"assets/teams/liquid.png", region:"NA", points:1277,
+    roster:"NAF · EliGE · malbsMd · siuhy · ultimate", streak:["w"],
+    note:"Eliminated HEROIC in Stage 1 — the rebuild is showing signs of life." },
+  { id:"t4", rank:4, prevRank:4, name:"NRG", logo:"assets/teams/nrg.png", region:"NA", points:1198,
+    roster:"nitr0 · Sonic · oSee · Grim · br0", streak:["l"],
+    note:"Fell in the NA derby to M80 but holds firm inside the top four." },
+  { id:"t5", rank:5, prevRank:5, name:"Voca", logo:"assets/teams/voca.png", region:"NA", points:1151,
+    roster:"junior · nosraC · shane · snav · Jeorge", streak:[],
+    note:"All-American lineup steadily climbing the domestic ladder." },
+  { id:"t6", rank:6, prevRank:6, name:"Chicken Coop", logo:"assets/teams/chickencoop.png", region:"NA", points:1016,
+    roster:"mds · Drop · REKMEISTER · jared · Crisp", streak:["w","w"],
+    note:"Won the all-NA FRAG TAP Reloaded final over Marsborne." },
+  { id:"t7", rank:7, prevRank:7, name:"Marsborne", logo:"assets/teams/marsborne.png", region:"NA", points:1005,
+    roster:"freshie · Grizz · ogwizard · marekiew · WUMBO", streak:["l","w","l"],
+    note:"FRAG TAP runner-up; knocking on the door of the top five." },
+  { id:"t8", rank:8, prevRank:8, name:"LAG", logo:"assets/teams/lag.png", region:"NA", points:870,
+    roster:"djay · Cryptic · kmrn · nicx · Sandman", streak:[],
+    note:"Veteran NA grinders rounding out the VRS top eight." }
 ];
 
 
 /* ---- RECENT NA RESULTS ------------------------------------ */
-/* Add newest at the TOP. Mark the winner with won:true.            */
+/* Real results pulled from HLTV. Add newest at the TOP; mark the
+   winner's side with won:true. Scores are series (maps).               */
 const RESULTS = [
-  { id:"r1", date:"2026-06-24", event:"ESL Challenger League S49 — NA",
-    a:{ name:"Wildcard", score:2, won:true }, b:{ name:"M80", score:1, won:false },
-    note:"Decider went the distance; Wildcard close out on Nuke." },
-  { id:"r2", date:"2026-06-22", event:"ESEA Advanced — Playoffs",
-    a:{ name:"NRG", score:2, won:true }, b:{ name:"Nouns", score:0, won:false },
-    note:"NRG keep the win streak alive with a clean sweep." },
-  { id:"r3", date:"2026-06-21", event:"CCT NA Series 4",
-    a:{ name:"Complexity", score:2, won:true }, b:{ name:"Liquid", score:1, won:false },
-    note:"Grim's entry numbers decide a tight third map." },
-  { id:"r4", date:"2026-06-19", event:"Open Qualifier — RMR Pipeline",
-    a:{ name:"Take Flyte", score:2, won:true }, b:{ name:"BOSS", score:1, won:false },
-    note:"Prospect derby; Take Flyte punch through on overtime Ancient." }
+  { id:"r1", date:"2026-06-04", event:"IEM Cologne Major 2026 — Stage 1",
+    a:{ name:"M80", score:2, won:true }, b:{ name:"NRG", score:0, won:false },
+    note:"M80 take the all-NA derby and book a Stage 2 spot." },
+  { id:"r2", date:"2026-06-04", event:"IEM Cologne Major 2026 — Stage 1",
+    a:{ name:"Liquid", score:2, won:true }, b:{ name:"HEROIC", score:0, won:false },
+    note:"Liquid knock HEROIC out of the Major in Stage 1." },
+  { id:"r3", date:"2026-06-03", event:"IEM Cologne Major 2026 — Stage 1",
+    a:{ name:"B8", score:2, won:true }, b:{ name:"M80", score:0, won:false },
+    note:"B8 send M80 down to the elimination bracket." },
+  { id:"r4", date:"2026-06-01", event:"FRAG TAP Reloaded 2026",
+    a:{ name:"Chicken Coop", score:3, won:true }, b:{ name:"Marsborne", score:2, won:false },
+    note:"Five-map thriller; Chicken Coop edge the all-NA final." },
+  { id:"r5", date:"2026-05-31", event:"FRAG TAP Reloaded 2026",
+    a:{ name:"Marsborne", score:2, won:true }, b:{ name:"SportsBetExpert", score:0, won:false },
+    note:"Marsborne cruise into the final." }
 ];
 
 
