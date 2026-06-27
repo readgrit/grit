@@ -62,7 +62,7 @@ const ABOUT = {
 /* ---- NA TEAM RANKING -------------------------------------- */
 /* SAMPLE DATA — replace with your own ranking. Array order = rank. */
 const TEAMS = [
-  { id:"t1", rank:1, prevRank:2, name:"Wildcard",  logo:"", region:"NA", points:312,
+  { id:"t1", rank:1, prevRank:2, name:"Wildcard",  logo:"assets/teams/wildcard.png", region:"NA", points:312,
     roster:"susp · JBa · phantom · Sonic · oily", streak:["w","w","w","l","w"],
     note:"Top of the region and the only NA side troubling tier-one abroad." },
   { id:"t2", rank:2, prevRank:1, name:"M80",       logo:"", region:"NA", points:287,
