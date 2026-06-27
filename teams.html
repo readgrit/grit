@@ -48,7 +48,11 @@
 </nav>
 <main class="page">
   <div class="section-head"><span class="eyebrow">/ Power ranking</span><h2>NA Team Ranking</h2><span class="rule"></span></div>
-  <p style="font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.03em;line-height:1.6;margin:-4px 0 14px;max-width:640px;">A subjective, reasoned ranking of North American Counter-Strike teams &mdash; weighted by recent results, quality of opposition, and form. Updated regularly. Arrows show movement since the last update.</p>
+  <div class="view-toggle" id="teams-view-toggle" role="group" aria-label="Ranking view">
+    <button class="vt on" data-view="grit">GRIT Ranking</button>
+    <button class="vt" data-view="vrs">VRS</button>
+  </div>
+  <p class="lede-note" id="teams-note"></p>
   <div id="teams-content"></div>
 
   <div class="section-head"><span class="eyebrow">/ Recent results</span><h2>What Moved The Ranking</h2><span class="rule"></span></div>

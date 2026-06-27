@@ -72,21 +72,98 @@ function logoOrMono(o) {
     ? `<img class="r-logo" src="${esc(o.logo)}" alt="${esc(o.name || o.handle)}" loading="lazy">`
     : `<div class="r-mono">${esc(monogram(o.name || o.handle))}</div>`;
 }
-function teamRow(t) {
-  return `<div class="rank-row team-row">
-    <div class="r-num${t.rank <= 3 ? ' top3 chrome' : ''}">${esc(t.rank)}</div>
-    ${moveTag(t.rank, t.prevRank)}${logoOrMono(t)}
+function gritTierFor(rank) {
+  for (const t of GRIT_TIERS) if (rank <= t.max) return t;
+  return GRIT_TIERS[GRIT_TIERS.length - 1];
+}
+/* VRS rank is auto-computed from vrsPoints (you only maintain points) */
+function vrsRankMap() {
+  const m = new Map();
+  TEAMS.filter(t => t.vrsPoints != null)
+    .sort((a, b) => b.vrsPoints - a.vrsPoints)
+    .forEach((t, i) => m.set(t.id, i + 1));
+  return m;
+}
+/* VRS rank shown beside a GRIT row, with the GRIT-vs-VRS delta */
+function vrsRefHtml(t, vrsRank) {
+  if (vrsRank == null) return '<div class="vrs-ref none">VRS&nbsp;&ndash;</div>';
+  const d = vrsRank - t.gritRank; // >0 means GRIT rates them higher than VRS
+  let delta = '<span class="vd even">=</span>';
+  if (d > 0) delta = `<span class="vd up">&#9650;${d}</span>`;
+  else if (d < 0) delta = `<span class="vd down">&#9660;${-d}</span>`;
+  return `<div class="vrs-ref">VRS&nbsp;${vrsRank} ${delta}</div>`;
+}
+/* official VRS board row */
+function vrsRow(t, rank) {
+  return `<div class="rank-row vrs-row">
+    <div class="r-num${rank <= 3 ? ' top3' : ''}">${esc(rank)}</div>
+    ${logoOrMono(t)}
     <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div></div>
     <div class="r-stat">${streakHtml(t.streak)}</div>
-    <div class="r-points"><div class="v">${esc(t.points)}</div><div class="l">pts</div></div>
+    <div class="r-points"><div class="v">${esc(t.vrsPoints)}</div><div class="l">VRS pts</div></div>
   </div>`;
 }
-function renderTeams(id, limit) {
+/* GRIT board row */
+function gritRow(t, vmap) {
+  return `<div class="rank-row grit-row">
+    <div class="r-num${t.gritRank <= 3 ? ' top3' : ''}">${esc(t.gritRank)}</div>
+    ${moveTag(t.gritRank, t.gritPrev)}${logoOrMono(t)}
+    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div></div>
+    ${vrsRefHtml(t, vmap.get(t.id))}
+    <div class="r-stat">${streakHtml(t.streak)}</div>
+  </div>`;
+}
+function renderTeams(id, opts) {
   const el = document.getElementById(id); if (!el) return;
-  const list = [...TEAMS].sort(byRank).slice(0, limit || TEAMS.length);
+  opts = opts || {};
+  const mode = opts.mode || 'grit';
   el.className = 'rank-table glass hud';
-  el.innerHTML = (list.length ? list.map(teamRow).join('')
-    : '<div class="empty-state">No teams ranked yet. Add them in data.js.</div>') + TICKS;
+
+  if (mode === 'vrs') {
+    let list = TEAMS.filter(t => t.vrsPoints != null).sort((a, b) => b.vrsPoints - a.vrsPoints);
+    if (opts.limit) list = list.slice(0, opts.limit);
+    el.innerHTML = (list.length ? list.map((t, i) => vrsRow(t, i + 1)).join('')
+      : '<div class="empty-state">No VRS-ranked teams yet.</div>') + TICKS;
+    return;
+  }
+
+  // GRIT — only teams that have been given a gritRank
+  const vmap = vrsRankMap();
+  let list = TEAMS.filter(t => t.gritRank != null).sort((a, b) => a.gritRank - b.gritRank);
+  if (opts.limit) list = list.slice(0, opts.limit);
+  if (opts.flat) { el.innerHTML = list.map(t => gritRow(t, vmap)).join('') + TICKS; return; }
+
+  let html = '';
+  for (const tier of GRIT_TIERS) {
+    const inTier = list.filter(t => gritTierFor(t.gritRank).key === tier.key);
+    if (!inTier.length) continue;
+    html += `<div class="tier-band"><span class="tl">${esc(tier.name)}</span><span class="td">${esc(tier.desc)}</span></div>`;
+    html += inTier.map(t => gritRow(t, vmap)).join('');
+  }
+  el.innerHTML = (html || '<div class="empty-state">No teams ranked yet. Add them in data.js.</div>') + TICKS;
+}
+
+/* Teams page: GRIT <-> VRS toggle */
+const TEAMS_NOTE = {
+  grit: "The GRIT ranking: our curated read on the NA teams worth watching, tiered by how ready they are. VRS shown beside each — the arrow is where we disagree with the algorithm.",
+  vrs:  "The official HLTV Americas Valve Regional Standings, filtered to North America and ordered by VRS points (Jun 2026). Rank auto-computes from points."
+};
+function initTeamsPage() {
+  const el = document.getElementById('teams-content'); if (!el) return;
+  let mode = 'grit';
+  const note = document.getElementById('teams-note');
+  const tg = document.getElementById('teams-view-toggle');
+  const apply = () => {
+    if (note) note.textContent = TEAMS_NOTE[mode];
+    renderTeams('teams-content', { mode });
+  };
+  if (tg) tg.querySelectorAll('.vt').forEach(b => b.onclick = () => {
+    mode = b.dataset.view;
+    tg.querySelectorAll('.vt').forEach(x => x.classList.toggle('on', x === b));
+    apply();
+  });
+  apply();
+  renderResults('teams-results', 6);
 }
 
 /* ---- BOARD (player ranking) ------------------------------ */
@@ -232,9 +309,9 @@ function renderFloor(id) {
 function renderMiniStats(id) {
   const el = document.getElementById(id); if (!el) return;
   const signed = PROSPECTS.filter(p => p.status === 'Signed').length;
-  const fresh = PROSPECTS.filter(p => p.prevRank == null).length + TEAMS.filter(t => t.prevRank == null).length;
+  const fresh = PROSPECTS.filter(p => p.prevRank == null).length + TEAMS.filter(t => t.gritRank != null && t.gritPrev == null).length;
   const cells = [
-    { v: TEAMS.length, l: 'Teams ranked' },
+    { v: TEAMS.length, l: 'NA teams tracked' },
     { v: PROSPECTS.length, l: 'Prospects tracked' },
     { v: signed, l: 'Signed off board', accent: true },
     { v: fresh, l: 'New this update' }
@@ -265,16 +342,16 @@ function initAbout() {
 function initHome() {
   const hero = document.getElementById('home-hero');
   if (!hero) return;
-  const t1 = [...TEAMS].sort(byRank)[0];
+  const t1 = [...TEAMS].sort((a, b) => a.gritRank - b.gritRank)[0];
   const p1 = [...PROSPECTS].sort(byRank)[0];
   const teamWrap = document.getElementById('home-feat-team');
   if (teamWrap && t1) teamWrap.innerHTML = `${TICKS}
-    <div class="hud-card-label">No.1 Team <span class="tag-no1">NA Power Ranking</span></div>
+    <div class="hud-card-label">No.1 Team <span class="tag-no1">GRIT Ranking</span></div>
     <div class="feat-unit">
-      <div class="feat-rank chrome">1</div>
+      <div class="feat-rank">1</div>
       ${t1.logo ? `<img class="feat-logo" src="${esc(t1.logo)}" alt="${esc(t1.name)}">` : `<div class="feat-mono">${esc(monogram(t1.name))}</div>`}
       <div class="feat-meta"><div class="feat-name">${esc(t1.name)}</div><div class="feat-detail">${esc(t1.region || 'NA')} &middot; ${esc((t1.roster || '').split('·')[0].trim())} +4</div></div>
-      <div class="feat-points"><div class="v">${esc(t1.points)}</div><div class="l">pts</div></div>
+      <div class="feat-points"><div class="v">${esc(t1.vrsPoints || '—')}</div><div class="l">VRS pts</div></div>
     </div>`;
   const pWrap = document.getElementById('home-feat-player');
   if (pWrap && p1) pWrap.innerHTML = `${TICKS}
@@ -286,7 +363,7 @@ function initHome() {
       <div class="feat-points"><div class="v">${esc(p1.rating || '—')}</div><div class="l">rating</div></div>
     </div>`;
   renderMiniStats('home-mini-stats');
-  renderTeams('home-teams', 5);
+  renderTeams('home-teams', { mode: 'grit', flat: true, limit: 5 });
   renderBoard('home-board', { preview: true, limit: 5 });
   renderResults('home-results', 4);
   loadPosts('home-posts', 3);
@@ -302,6 +379,6 @@ function handleSub() {
 /* ---- BOOT ------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
   initTheme(); fillChrome(); initHome(); initAbout();
-  if (document.getElementById('teams-content')) { renderTeams('teams-content'); renderResults('teams-results', 6); }
+  if (document.getElementById('teams-content')) { initTeamsPage(); }
   if (document.getElementById('board-content')) { initBoardControls(); renderBoard('board-content'); renderFloor('board-floor'); renderMiniStats('board-mini-stats'); }
 });
