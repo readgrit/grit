@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The GRIT prospect ranking for North American Counter-Strike. Every player clears a published scouting floor.">
+<title>The Big Board | GRIT</title>
+<link rel="icon" href="grit-logo.png">
+<script>(function(){try{var t=localStorage.getItem('grit-theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="ticker" aria-hidden="true">
+  <span class="ticker-track">
+    GRIT <span class="ticker-sep">+</span> GRIND. READ. IMPROVE. TRACK. <span class="ticker-sep">+</span> THE HOME OF NA COUNTER-STRIKE <span class="ticker-sep">+</span> RANKINGS <span class="ticker-sep">+</span> PROSPECTS <span class="ticker-sep">+</span> RESULTS <span class="ticker-sep">+</span> READGRIT.US <span class="ticker-sep">+</span>&nbsp;
+    GRIT <span class="ticker-sep">+</span> GRIND. READ. IMPROVE. TRACK. <span class="ticker-sep">+</span> THE HOME OF NA COUNTER-STRIKE <span class="ticker-sep">+</span> RANKINGS <span class="ticker-sep">+</span> PROSPECTS <span class="ticker-sep">+</span> RESULTS <span class="ticker-sep">+</span> READGRIT.US <span class="ticker-sep">+</span>&nbsp;
+  </span>
+</div>
+<header class="masthead">
+  <div class="mast-top">
+    <div class="wrap">
+      <span data-today>Today</span>
+      <a class="sub" data-substack-href href="#" target="_blank" rel="noopener">Subscribe Free &rarr;</a>
+      <span class="spacer"></span>
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">
+        <span class="dot-i"></span><span data-theme-label>Light</span>
+      </button>
+    </div>
+  </div>
+  <div class="wrap mast-center">
+    <a href="index.html"><img class="mast-logo" src="grit-logo.png" alt="GRIT"></a>
+    <div class="mast-text">
+      <div class="mast-title"><a href="index.html">GRIT</a></div>
+      <div class="mast-meaning">Grind. Read. Improve. Track.</div>
+    </div>
+    <div class="mast-tagline" data-site-tagline></div>
+  </div>
+</header>
+<nav class="strip" aria-label="Main">
+  <div class="wrap">
+    <a href="index.html">Home</a><a href="teams.html">Teams</a><a href="board.html" class="active">Board</a><a href="about.html">About</a>
+    <a class="external" data-substack-href href="#" target="_blank" rel="noopener">Subscribe &rarr;</a>
+  </div>
+</nav>
+<main class="page">
+  <div class="section-head"><span class="eyebrow">/ The big board</span><h2>NA Prospect Ranking</h2><span class="rule"></span></div>
+  <p style="font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.03em;line-height:1.6;margin:-4px 0 14px;max-width:640px;">Every player here clears the scouting floor and is ranked by how ready they are to be signed. Filter by role or division to find a fit.</p>
+  <div class="legend"><div class="glass legend-card"><span class="legend-tier">S</span><span class="legend-name">Pro-Ready</span><div class="legend-desc">Should have a contract right now.</div></div><div class="glass legend-card"><span class="legend-tier">A</span><span class="legend-name">Breakout</span><div class="legend-desc">An org signing is coming.</div></div><div class="glass legend-card"><span class="legend-tier">B</span><span class="legend-name">Prospect</span><div class="legend-desc">Pro trajectory confirmed, needs time.</div></div><div class="glass legend-card"><span class="legend-tier">C</span><span class="legend-name">Radar</span><div class="legend-desc">Real upside, not yet proven.</div></div></div>
+  <div class="controls" role="search" aria-label="Filter prospects">
+    <div class="search-field"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="board-search" type="search" placeholder="Search handle, team, division..." autocomplete="off" aria-label="Search prospects"></div>
+    <div class="filter-group" id="role-filters" role="group" aria-label="Filter by role"></div>
+    <select class="div-select" id="div-filter" aria-label="Filter by division"></select>
+    <a class="btn" href="mailto:contact@readgrit.us?subject=Prospect%20Submission&body=Handle%3A%0ARole%3A%0ADivision%3A%0AStats%20(rating%2C%20ADR%2C%20ELO)%3A%0AWhy%20they%20belong%3A%0AFACEIT%20link%3A">Submit a player</a>
+  </div>
+  <div id="board-content"></div>
+
+  <div class="section-head"><span class="eyebrow">/ The standard</span><h2>The Scouting Floor</h2><span class="rule"></span></div>
+  <div class="floor-wrap">
+    <div class="glass hud floor-box" id="board-floor"></div>
+    <div class="mini-stats" id="board-mini-stats" style="align-self:start;"></div>
+  </div>
+
+  <div class="section-head"><span class="eyebrow">/ Subscribe</span><h2>Get It First</h2><span class="rule"></span></div>
+  <div class="glass hud sub-box"><span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
+    <h3>The Report, In Your <em>Inbox.</em></h3>
+    <p class="sub-deck">Rankings, prospect drops, and the NA scene digest &mdash; free, every week on Substack.</p>
+    <div class="sub-form">
+      <input class="sub-input" type="email" id="sub-email" placeholder="your@email.com" aria-label="Email address">
+      <button class="sub-go" onclick="handleSub()">Subscribe</button>
+    </div>
+    <p class="sub-fine">Delivered via <a data-substack-href href="#" target="_blank" rel="noopener">readgrit.substack.com</a>. Unsubscribe anytime.</p>
+  </div>
+</main>
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img class="footer-logo" src="grit-logo.png" alt="GRIT">
+      <span class="footer-title">GRIT</span>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" data-substack-href href="#" target="_blank" rel="noopener">Newsletter</a>
+      <a class="footer-link" href="https://twitter.com/readgrit" target="_blank" rel="noopener">X / Twitter</a>
+      <a class="footer-link" href="mailto:contact@readgrit.us">Contact</a>
+    </div>
+    <div class="footer-copy">&copy; <span data-year>2026</span> GRIT &middot; Grind. Read. Improve. Track. &middot; Independent NA Counter-Strike coverage &middot; readgrit.us</div>
+  </div>
+</footer>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
