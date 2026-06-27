@@ -1,0 +1,307 @@
+/* ============================================================
+   GRIT — APP LOGIC
+   Renders every page from data.js + pulls posts from Substack.
+   You should not need to edit this file.
+   ============================================================ */
+
+const ROLES = ['AWP', 'IGL', 'Entry', 'Rifler', 'Support', 'Lurker'];
+const TIERS = ['S', 'A', 'B', 'C'];
+const TICKS = '<span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>';
+
+/* ---- HELPERS --------------------------------------------- */
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function fmtDate(iso) {
+  const d = (iso instanceof Date) ? iso : new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso + 'T00:00:00' : iso);
+  if (isNaN(d)) return esc(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function byRank(a, b) { return a.rank - b.rank; }
+function monogram(name) {
+  const p = String(name || '?').trim().split(/\s+/);
+  return (p.length > 1 ? (p[0][0] + p[1][0]) : String(name || '?').slice(0, 2)).toUpperCase();
+}
+function moveTag(rank, prev) {
+  if (prev == null) return '<div class="r-move new">NEW</div>';
+  const d = prev - rank;
+  if (d > 0) return `<div class="r-move up">&#9650;${d}</div>`;
+  if (d < 0) return `<div class="r-move down">&#9660;${-d}</div>`;
+  return '<div class="r-move same">&ndash;</div>';
+}
+function streakHtml(s) {
+  if (!s || !s.length) return '';
+  const bars = s.slice(0, 5).map(r => `<i class="${r === 'w' ? 'w' : r === 'l' ? 'l' : ''}"></i>`).join('');
+  return `<div class="cell" style="text-align:left"><div class="streak">${bars}</div><div class="l" style="margin-top:5px">Form</div></div>`;
+}
+function stripHtml(html) {
+  const d = document.createElement('div'); d.innerHTML = html || '';
+  return (d.textContent || '').replace(/\s+/g, ' ').trim();
+}
+function truncate(s, n) { return s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s; }
+
+/* ---- THEME (dark default) -------------------------------- */
+function currentTheme() { return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('[data-theme-label]').forEach(el => { el.textContent = t === 'dark' ? 'Light' : 'Dark'; });
+}
+function initTheme() {
+  applyTheme(currentTheme());
+  document.querySelectorAll('[data-theme-toggle]').forEach(btn => btn.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try { localStorage.setItem('grit-theme', next); } catch (e) {}
+  }));
+}
+
+/* ---- SHARED CHROME --------------------------------------- */
+function fillChrome() {
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  document.querySelectorAll('[data-today]').forEach(el => el.textContent = today);
+  document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
+  document.querySelectorAll('[data-site-tagline]').forEach(el => el.textContent = SITE.tagline);
+  document.querySelectorAll('[data-site-meaning]').forEach(el => el.textContent = SITE.meaning);
+  document.querySelectorAll('[data-substack-href]').forEach(el => el.setAttribute('href', SITE.substack));
+}
+
+/* ---- TEAM RANKING ---------------------------------------- */
+function logoOrMono(o) {
+  return o.logo
+    ? `<img class="r-logo" src="${esc(o.logo)}" alt="${esc(o.name || o.handle)}" loading="lazy">`
+    : `<div class="r-mono">${esc(monogram(o.name || o.handle))}</div>`;
+}
+function teamRow(t) {
+  return `<div class="rank-row team-row">
+    <div class="r-num${t.rank <= 3 ? ' top3 chrome' : ''}">${esc(t.rank)}</div>
+    ${moveTag(t.rank, t.prevRank)}${logoOrMono(t)}
+    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div></div>
+    <div class="r-stat">${streakHtml(t.streak)}</div>
+    <div class="r-points"><div class="v">${esc(t.points)}</div><div class="l">pts</div></div>
+  </div>`;
+}
+function renderTeams(id, limit) {
+  const el = document.getElementById(id); if (!el) return;
+  const list = [...TEAMS].sort(byRank).slice(0, limit || TEAMS.length);
+  el.className = 'rank-table glass hud';
+  el.innerHTML = (list.length ? list.map(teamRow).join('')
+    : '<div class="empty-state">No teams ranked yet. Add them in data.js.</div>') + TICKS;
+}
+
+/* ---- BOARD (player ranking) ------------------------------ */
+function boardRow(p) {
+  const stats = (p.rating || p.adr || p.elo) ? `<div class="r-stat">
+      ${p.rating ? `<div class="cell"><div class="v">${esc(p.rating)}</div><div class="l">Rating</div></div>` : ''}
+      ${p.adr ? `<div class="cell"><div class="v">${esc(p.adr)}</div><div class="l">ADR</div></div>` : ''}
+      ${p.elo ? `<div class="cell"><div class="v">${esc(p.elo)}</div><div class="l">ELO</div></div>` : ''}
+    </div>` : '<div class="r-stat"></div>';
+  return `<div class="rank-row board-row">
+    <div class="r-num${p.rank <= 3 ? ' top3 chrome' : ''}">${esc(p.rank)}</div>
+    ${moveTag(p.rank, p.prevRank)}
+    <div><span class="role-tag ${esc(p.role)}">${esc(p.role)}</span></div>
+    <div class="r-name"><div class="nm">${esc(p.handle)}</div><div class="sub">${esc(p.division)} &middot; ${esc(p.team || 'Free agent')}</div></div>
+    ${stats}
+    <div><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
+  </div>`;
+}
+const boardState = { q: '', role: 'all', div: 'all' };
+function boardPasses(p) {
+  if (boardState.role !== 'all' && p.role !== boardState.role) return false;
+  if (boardState.div !== 'all' && p.division !== boardState.div) return false;
+  if (boardState.q) {
+    const hay = (p.handle + ' ' + (p.team || '') + ' ' + p.division + ' ' + p.role).toLowerCase();
+    if (!hay.includes(boardState.q)) return false;
+  }
+  return true;
+}
+function anyBoardFilter() { return boardState.role !== 'all' || boardState.div !== 'all' || boardState.q; }
+function renderBoard(id, opts) {
+  const el = document.getElementById(id || 'board-content'); if (!el) return;
+  opts = opts || {};
+  let pool = [...PROSPECTS].sort(byRank);
+  if (!opts.preview) pool = pool.filter(boardPasses);
+  if (opts.limit) pool = pool.slice(0, opts.limit);
+  el.className = 'rank-table glass hud';
+  if (opts.preview || opts.flat) {
+    el.innerHTML = (pool.length ? pool.map(boardRow).join('')
+      : '<div class="empty-state">No prospects yet. Add them in data.js.</div>') + TICKS;
+    return;
+  }
+  let html = ''; let any = false;
+  for (const tier of TIERS) {
+    const inTier = pool.filter(p => p.tier === tier);
+    if (!inTier.length) continue;
+    any = true;
+    const info = TIER_INFO[tier] || { name: '', desc: '' };
+    html += `<div class="tier-band"><span class="tl">${tier}</span>${esc(info.name)}<span class="td">${esc(info.desc)}</span></div>`;
+    html += inTier.map(boardRow).join('');
+  }
+  el.innerHTML = (any ? html : `<div class="empty-state">No prospects${anyBoardFilter() ? ' match this filter' : ' yet'}.</div>`) + TICKS;
+}
+function initBoardControls() {
+  const rf = document.getElementById('role-filters');
+  if (rf) {
+    rf.innerHTML = '';
+    rf.appendChild(makeChip('All', boardState.role === 'all', () => { boardState.role = 'all'; syncRoleChips(); renderBoard(); }));
+    ROLES.forEach(r => {
+      const c = makeChip(r, boardState.role === r, () => { boardState.role = r; syncRoleChips(); renderBoard(); });
+      c.classList.add('role-' + r.toLowerCase()); rf.appendChild(c);
+    });
+  }
+  const df = document.getElementById('div-filter');
+  if (df) {
+    const divs = [...new Set(PROSPECTS.map(p => p.division))];
+    df.innerHTML = '<option value="all">All divisions</option>' + divs.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
+    df.onchange = () => { boardState.div = df.value; renderBoard(); };
+  }
+  const si = document.getElementById('board-search');
+  if (si) si.oninput = e => { boardState.q = e.target.value.toLowerCase().trim(); renderBoard(); };
+}
+function makeChip(label, active, onClick) {
+  const b = document.createElement('button');
+  b.className = 'chip' + (active ? ' on' : ''); b.textContent = label; b.onclick = onClick; return b;
+}
+function syncRoleChips() {
+  document.querySelectorAll('#role-filters .chip').forEach(c => {
+    const t = c.textContent;
+    c.classList.toggle('on', (t === 'All' && boardState.role === 'all') || t === boardState.role);
+  });
+}
+
+/* ---- RECENT RESULTS -------------------------------------- */
+function resultCard(r) {
+  const line = (t) => `<div class="result-line ${t.won ? 'win' : 'lose'}"><span class="tname">${esc(t.name)}</span><span class="tscore">${esc(t.score)}</span></div>`;
+  return `<div class="glass hud result-card">${TICKS}
+    <div class="result-event">${esc(r.event)}<span class="rdate">${fmtDate(r.date)}</span></div>
+    ${line(r.a)}${line(r.b)}
+    ${r.note ? `<div class="result-note">${esc(r.note)}</div>` : ''}
+  </div>`;
+}
+function renderResults(id, limit) {
+  const el = document.getElementById(id); if (!el || typeof RESULTS === 'undefined') return;
+  const list = RESULTS.slice(0, limit || RESULTS.length);
+  el.innerHTML = list.length ? list.map(resultCard).join('')
+    : '<div class="empty-state">No results logged yet. Add them in data.js.</div>';
+}
+
+/* ---- SUBSTACK AUTO-PULL ---------------------------------- */
+function postCard(it) {
+  const cat = (it.categories && it.categories[0]) ? it.categories[0] : 'Dispatch';
+  const excerpt = truncate(stripHtml(it.description || it.content || ''), 150);
+  return `<a class="glass hud post-card" href="${esc(it.link)}" target="_blank" rel="noopener">${TICKS}
+    <div class="post-cat">${esc(cat)}</div>
+    <h3>${esc(it.title || 'Untitled')}</h3>
+    <div class="post-meta">${fmtDate(it.pubDate)} &nbsp;/&nbsp; on Substack</div>
+    <p class="post-excerpt">${esc(excerpt)}</p>
+  </a>`;
+}
+function postSkeleton(n) {
+  let one = `<div class="glass post-skeleton"><div class="sk s"></div><div class="sk t"></div><div class="sk"></div><div class="sk"></div></div>`;
+  return new Array(n || 3).fill(one).join('');
+}
+function postFallback() {
+  return `<a class="glass hud post-card" href="${esc(SITE.substack)}" target="_blank" rel="noopener">${TICKS}
+    <div class="post-cat">Substack</div>
+    <h3>Read the latest on Substack &rarr;</h3>
+    <div class="post-meta">readgrit.substack.com</div>
+    <p class="post-excerpt">New dispatches drop on the newsletter. Tap through to read every post and subscribe free.</p>
+  </a>`;
+}
+async function loadPosts(id, limit) {
+  const el = document.getElementById(id); if (!el) return;
+  el.innerHTML = postSkeleton(limit || 3);
+  try {
+    const res = await fetch(SITE.rssProxy + encodeURIComponent(SITE.feed), { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('status ' + res.status);
+    const data = await res.json();
+    const items = (data && data.items) ? data.items.slice(0, limit || 3) : [];
+    if (!items.length) throw new Error('no items');
+    el.innerHTML = items.map(postCard).join('');
+  } catch (e) {
+    el.innerHTML = postFallback();
+  }
+}
+
+/* ---- SCOUTING FLOOR + MINI STATS ------------------------- */
+function renderFloor(id) {
+  const el = document.getElementById(id); if (!el) return;
+  el.innerHTML = `<p class="floor-intro">A player must clear at least one of these to make the board. No exceptions.</p>
+    <ul class="floor-list">${SCOUTING_FLOOR.map(f => `<li><span class="dot${f.primary ? '' : ' secondary'}"></span>${esc(f.label)}</li>`).join('')}</ul>`;
+}
+function renderMiniStats(id) {
+  const el = document.getElementById(id); if (!el) return;
+  const signed = PROSPECTS.filter(p => p.status === 'Signed').length;
+  const fresh = PROSPECTS.filter(p => p.prevRank == null).length + TEAMS.filter(t => t.prevRank == null).length;
+  const cells = [
+    { v: TEAMS.length, l: 'Teams ranked' },
+    { v: PROSPECTS.length, l: 'Prospects tracked' },
+    { v: signed, l: 'Signed off board', accent: true },
+    { v: fresh, l: 'New this update' }
+  ];
+  el.innerHTML = cells.map(c => `<div class="mini-stat"><div class="v${c.accent ? ' accent' : ''}">${c.v}</div><div class="l">${c.l}</div></div>`).join('');
+}
+
+/* ---- ABOUT ----------------------------------------------- */
+function initAbout() {
+  const root = document.getElementById('about-root');
+  if (!root || typeof ABOUT === 'undefined') return;
+  const blocks = ABOUT.blocks.map(b =>
+    `<div class="glass hud about-block">${TICKS}<h3>${esc(b.h)}</h3>${b.ps.map(p => `<p>${esc(p)}</p>`).join('')}</div>`).join('');
+  const pillars = ABOUT.pillars.map(p =>
+    `<div class="pillar"><div class="pl">${esc(p.l)}</div><div class="pn">${esc(p.n)}</div><div class="pd">${esc(p.d)}</div></div>`).join('');
+  root.innerHTML = `
+    <div class="about-hero">
+      <div class="about-kicker">${esc(ABOUT.kicker)}</div>
+      <h1>${esc(ABOUT.title)}</h1>
+      <p class="lede">${esc(ABOUT.lede)}</p>
+    </div>
+    <div class="pillars">${pillars}</div>
+    <div class="section-head"><span class="eyebrow">/ Mission</span><h2>The long version</h2><span class="rule"></span></div>
+    <div class="about-grid">${blocks}</div>`;
+}
+
+/* ---- HOME ------------------------------------------------ */
+function initHome() {
+  const hero = document.getElementById('home-hero');
+  if (!hero) return;
+  const t1 = [...TEAMS].sort(byRank)[0];
+  const p1 = [...PROSPECTS].sort(byRank)[0];
+  const teamWrap = document.getElementById('home-feat-team');
+  if (teamWrap && t1) teamWrap.innerHTML = `${TICKS}
+    <div class="hud-card-label">No.1 Team <span class="tag-no1">NA Power Ranking</span></div>
+    <div class="feat-unit">
+      <div class="feat-rank chrome">1</div>
+      ${t1.logo ? `<img class="feat-logo" src="${esc(t1.logo)}" alt="${esc(t1.name)}">` : `<div class="feat-mono">${esc(monogram(t1.name))}</div>`}
+      <div class="feat-meta"><div class="feat-name">${esc(t1.name)}</div><div class="feat-detail">${esc(t1.region || 'NA')} &middot; ${esc((t1.roster || '').split('·')[0].trim())} +4</div></div>
+      <div class="feat-points"><div class="v">${esc(t1.points)}</div><div class="l">pts</div></div>
+    </div>`;
+  const pWrap = document.getElementById('home-feat-player');
+  if (pWrap && p1) pWrap.innerHTML = `${TICKS}
+    <div class="hud-card-label">No.1 Prospect <span class="tag-no1">The Big Board</span></div>
+    <div class="feat-unit">
+      <div class="feat-rank chrome">1</div>
+      <div class="feat-mono">${esc(p1.role.slice(0, 3))}</div>
+      <div class="feat-meta"><div class="feat-name">${esc(p1.handle)}</div><div class="feat-detail">${esc(p1.role)} &middot; ${esc(p1.division)}</div></div>
+      <div class="feat-points"><div class="v">${esc(p1.rating || '—')}</div><div class="l">rating</div></div>
+    </div>`;
+  renderMiniStats('home-mini-stats');
+  renderTeams('home-teams', 5);
+  renderBoard('home-board', { preview: true, limit: 5 });
+  renderResults('home-results', 4);
+  loadPosts('home-posts', 3);
+}
+
+/* ---- SUBSCRIBE ------------------------------------------- */
+function handleSub() {
+  const input = document.getElementById('sub-email');
+  const email = input ? input.value.trim() : '';
+  window.open(email ? SITE.substack + '?email=' + encodeURIComponent(email) : SITE.substack, '_blank', 'noopener');
+}
+
+/* ---- BOOT ------------------------------------------------ */
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme(); fillChrome(); initHome(); initAbout();
+  if (document.getElementById('teams-content')) { renderTeams('teams-content'); renderResults('teams-results', 6); }
+  if (document.getElementById('board-content')) { initBoardControls(); renderBoard('board-content'); renderFloor('board-floor'); renderMiniStats('board-mini-stats'); }
+});
