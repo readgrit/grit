@@ -62,7 +62,7 @@ const ABOUT = {
 /* ---- NA TEAM RANKING -------------------------------------- */
 /* SAMPLE DATA — replace with your own ranking. Array order = rank. */
 const TEAMS = [
-  { id:"t1", rank:1, prevRank:2, name:"Wildcard",  logo:"", region:"NA", points:312,
+  { id:"t1", rank:1, prevRank:2, name:"Wildcard",  logo:"https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fescharts.com%2Fteams%2Fcsgo%2Fwildcard-gaming&ved=0CBYQjRxqFwoTCLiUwPyappUDFQAAAAAdAAAAABAb&opi=89978449", region:"NA", points:312,
     roster:"susp · JBa · phantom · Sonic · oily", streak:["w","w","w","l","w"],
     note:"Top of the region and the only NA side troubling tier-one abroad." },
   { id:"t2", rank:2, prevRank:1, name:"M80",       logo:"", region:"NA", points:287,
