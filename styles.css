@@ -494,3 +494,49 @@ nav.strip a:hover { background:var(--accent-soft); }
   position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
   background:var(--surface-2); border-radius:2px;
 }
+
+/* ============================================================
+   DECLUTTER PASS — remove banner/HUD noise, add air, soften
+   ============================================================ */
+.ticker { display:none !important; }
+.hud > .tick { display:none !important; }   /* drop crosshair corners */
+
+/* softer, single hairline rules everywhere (less clunk) */
+.masthead, nav.strip, .section-head { border-bottom:1px solid var(--hairline); }
+footer { border-top:1px solid var(--hairline); }
+.glass { border-radius:6px; }
+
+/* masthead: more breathing room */
+.masthead { padding:8px 0; }
+.mast-center { padding-top:30px; padding-bottom:28px; gap:24px; }
+.mast-wordmark { height:clamp(40px, 7vw, 66px); }
+.mast-meaning { margin-top:10px; }
+.mast-tagline { font-size:14px; max-width:270px; }
+
+/* nav: roomier, with the theme toggle living here now */
+nav.strip a { padding:15px 22px; }
+nav.strip .theme-toggle { align-self:center; margin-left:16px; border:1px solid var(--hairline); padding:6px 12px; }
+nav.strip .theme-toggle:hover { border-color:var(--accent); color:var(--ink); }
+@media (max-width:640px){ nav.strip .theme-toggle { margin-left:8px; } }
+
+/* generous spacing through the page */
+.page { padding-bottom:84px; }
+.section-head { padding:60px 0 22px; margin-bottom:26px; }
+.hero { gap:26px; padding-top:38px; }
+.hero-lead { padding:36px 34px; }
+.hero-side { gap:18px; }
+.hud-card { padding:22px; }
+.lead-title { line-height:1.06; }
+.lead-body { line-height:1.75; }
+.lede-note { margin:0 0 22px; }
+.view-toggle, .controls, .legend { margin-bottom:20px; }
+.results-strip { gap:16px; }
+.result-card { padding:18px 20px; }
+.posts-grid { gap:18px; }
+.post-card { padding:22px; }
+.rank-row { padding:15px 18px; }
+.tier-band { padding:24px 18px 10px; border-top-width:1px; }
+.about-hero { padding:56px 0 10px; }
+.about-grid { gap:24px; }
+.about-block { padding:26px; }
+.pillar { padding:26px 18px; }
