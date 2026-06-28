@@ -540,3 +540,26 @@ nav.strip .theme-toggle:hover { border-color:var(--accent); color:var(--ink); }
 .about-grid { gap:24px; }
 .about-block { padding:26px; }
 .pillar { padding:26px 18px; }
+
+/* ============================================================
+   MOBILE FIXES — nav overflow, tier-band crowding, prospect rows
+   ============================================================ */
+@media (max-width: 640px) {
+  /* nav: drop the redundant Subscribe link (every page has a sub box),
+     keep page links scrollable, pin the compact toggle to the right */
+  nav.strip a.external { display: none; }
+  nav.strip .theme-toggle { margin-left: auto; }
+  nav.strip a { padding: 12px 15px; }
+  /* masthead: stack tagline under the wordmark so nothing crowds */
+  .mast-center { gap: 14px; flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  /* tier headers: hide the long italic description, keep the label clean */
+  .tier-band .td { display: none; }
+  /* prospect rows: clean 4-column layout (rank · move · name · status) */
+  .board-row { grid-template-columns: 30px 22px 1fr auto; }
+  .board-row .role-cell, .board-row .r-stat { display: none; }
+  /* a touch more room for VRS ref + names */
+  .grit-row { grid-template-columns: 28px 22px 1fr auto; }
+  .rank-row { padding: 13px 14px; gap: 10px; }
+}

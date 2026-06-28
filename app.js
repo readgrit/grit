@@ -177,10 +177,10 @@ function boardRow(p) {
   return `<div class="rank-row board-row">
     <div class="r-num${p.rank <= 3 ? ' top3 chrome' : ''}">${esc(p.rank)}</div>
     ${moveTag(p.rank, p.prevRank)}
-    <div><span class="role-tag ${esc(p.role)}">${esc(p.role)}</span></div>
+    <div class="role-cell"><span class="role-tag ${esc(p.role)}">${esc(p.role)}</span></div>
     <div class="r-name"><div class="nm">${esc(p.handle)}</div><div class="sub">${esc(p.division)} &middot; ${esc(p.team || 'Free agent')}</div></div>
     ${stats}
-    <div><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
+    <div class="status-cell"><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
   </div>`;
 }
 const boardState = { q: '', role: 'all', div: 'all' };
