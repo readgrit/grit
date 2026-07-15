@@ -99,7 +99,7 @@ function vrsRow(t, rank) {
   return `<div class="rank-row vrs-row">
     <div class="r-num${rank <= 3 ? ' top3' : ''}">${esc(rank)}</div>
     ${logoOrMono(t)}
-    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div></div>
+    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     <div class="r-stat">${streakHtml(t.streak)}</div>
     <div class="r-points"><div class="v">${esc(t.vrsPoints)}</div><div class="l">VRS pts</div></div>
   </div>`;
@@ -109,7 +109,7 @@ function gritRow(t, vmap) {
   return `<div class="rank-row grit-row">
     <div class="r-num${t.gritRank <= 3 ? ' top3' : ''}">${esc(t.gritRank)}</div>
     ${moveTag(t.gritRank, t.gritPrev)}${logoOrMono(t)}
-    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div></div>
+    <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     ${vrsRefHtml(t, vmap.get(t.id))}
     <div class="r-stat">${streakHtml(t.streak)}</div>
   </div>`;
@@ -168,20 +168,29 @@ function initTeamsPage() {
 }
 
 /* ---- BOARD (player ranking) ------------------------------ */
+/* A prospect is a profile, not a table row — draft-guide style. */
 function boardRow(p) {
-  const stats = (p.rating || p.adr || p.elo) ? `<div class="r-stat">
-      ${p.rating ? `<div class="cell"><div class="v">${esc(p.rating)}</div><div class="l">Rating</div></div>` : ''}
-      ${p.adr ? `<div class="cell"><div class="v">${esc(p.adr)}</div><div class="l">ADR</div></div>` : ''}
-      ${p.elo ? `<div class="cell"><div class="v">${esc(p.elo)}</div><div class="l">ELO</div></div>` : ''}
-    </div>` : '<div class="r-stat"></div>';
-  return `<div class="rank-row board-row">
-    <div class="r-num${p.rank <= 3 ? ' top3 chrome' : ''}">${esc(p.rank)}</div>
-    ${moveTag(p.rank, p.prevRank)}
-    <div class="role-cell"><span class="role-tag ${esc(p.role)}">${esc(p.role)}</span></div>
-    <div class="r-name"><div class="nm">${esc(p.handle)}</div><div class="sub">${esc(p.division)} &middot; ${esc(p.team || 'Free agent')}</div></div>
-    ${stats}
-    <div class="status-cell"><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
-  </div>`;
+  const stat = (v, l) => v ? `<div class="pc-stat"><div class="v">${esc(v)}</div><div class="l">${l}</div></div>` : '';
+  return `<article class="prospect-card">
+    <div class="pc-portrait">
+      <span class="pc-tier">${esc(p.tier)}</span>
+      <span class="pc-mono">${esc(monogram(p.handle))}</span>
+    </div>
+    <div class="pc-body">
+      <div class="pc-head">
+        <span class="pc-rank">${esc(p.rank)}</span>
+        <h3 class="pc-name">${esc(p.handle)}</h3>
+        ${moveTag(p.rank, p.prevRank)}
+      </div>
+      <div class="pc-meta">${esc(p.role)} &middot; ${esc(p.team || 'Free agent')} &middot; ${esc(p.division)}</div>
+      ${p.note ? `<p class="pc-note">${esc(p.note)}</p>` : ''}
+      <div class="pc-foot">
+        ${stat(p.rating, 'Rating')}${stat(p.adr, 'ADR')}${stat(p.elo, 'ELO')}
+        <span class="pc-spacer"></span>
+        <span class="status-pill ${esc(p.status)}">${esc(p.status)}</span>
+      </div>
+    </div>
+  </article>`;
 }
 const boardState = { q: '', role: 'all', div: 'all' };
 function boardPasses(p) {
@@ -200,10 +209,10 @@ function renderBoard(id, opts) {
   let pool = [...PROSPECTS].sort(byRank);
   if (!opts.preview) pool = pool.filter(boardPasses);
   if (opts.limit) pool = pool.slice(0, opts.limit);
-  el.className = 'rank-table glass hud';
+  el.className = 'board-sections';
   if (opts.preview || opts.flat) {
-    el.innerHTML = (pool.length ? pool.map(boardRow).join('')
-      : '<div class="empty-state">No prospects yet. Add them in data.js.</div>') + TICKS;
+    el.innerHTML = pool.length ? `<div class="board-grid">${pool.map(boardRow).join('')}</div>`
+      : '<div class="empty-state glass">No prospects yet. Add them in data.js.</div>';
     return;
   }
   let html = ''; let any = false;
@@ -212,10 +221,11 @@ function renderBoard(id, opts) {
     if (!inTier.length) continue;
     any = true;
     const info = TIER_INFO[tier] || { name: '', desc: '' };
-    html += `<div class="tier-band"><span class="tl">${tier}</span>${esc(info.name)}<span class="td">${esc(info.desc)}</span></div>`;
-    html += inTier.map(boardRow).join('');
+    html += `<div class="tier-band board-band"><span class="tl">${tier} &mdash; ${esc(info.name)}</span><span class="td">${esc(info.desc)}</span></div>`;
+    html += `<div class="board-grid">${inTier.map(boardRow).join('')}</div>`;
   }
-  el.innerHTML = (any ? html : `<div class="empty-state">No prospects${anyBoardFilter() ? ' match this filter' : ' yet'}.</div>`) + TICKS;
+  el.innerHTML = any ? html
+    : `<div class="empty-state glass">No prospects${anyBoardFilter() ? ' match this filter' : ' yet'}.</div>`;
 }
 function initBoardControls() {
   const rf = document.getElementById('role-filters');
@@ -256,11 +266,44 @@ function resultCard(r) {
     ${r.note ? `<div class="result-note">${esc(r.note)}</div>` : ''}
   </div>`;
 }
+/* Results render from RESULTS_DATA, which starts as the static RESULTS in
+   data.js and gets replaced by the live Liquipedia feed when available. */
+let RESULTS_DATA = (typeof RESULTS !== 'undefined') ? RESULTS : [];
+
 function renderResults(id, limit) {
-  const el = document.getElementById(id); if (!el || typeof RESULTS === 'undefined') return;
-  const list = RESULTS.slice(0, limit || RESULTS.length);
+  const el = document.getElementById(id); if (!el) return;
+  const list = RESULTS_DATA.slice(0, limit || RESULTS_DATA.length);
   el.innerHTML = list.length ? list.map(resultCard).join('')
     : '<div class="empty-state">No results logged yet. Add them in data.js.</div>';
+}
+
+/* Pull the auto-updating NA results feed (Cloudflare Worker -> Liquipedia).
+   Stays on the static RESULTS until SITE.resultsFeed is set, so the site
+   works unchanged until you deploy the Worker. Adds the required credit. */
+async function hydrateResults() {
+  const url = (typeof SITE !== 'undefined') && SITE.resultsFeed;
+  if (!url) return;
+  try {
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) return;
+    const j = await r.json();
+    const list = Array.isArray(j) ? j : (j.results || []);
+    if (!list.length) return;
+    RESULTS_DATA = list;
+    if (document.getElementById('home-results')) renderResults('home-results', 4);
+    if (document.getElementById('teams-results')) renderResults('teams-results', 6);
+    addLiqCredit();
+  } catch (e) { /* keep static results on any failure */ }
+}
+function addLiqCredit() {
+  document.querySelectorAll('#home-results, #teams-results').forEach(el => {
+    const host = el.parentElement;
+    if (!host || host.querySelector('.liq-credit')) return;
+    const c = document.createElement('div');
+    c.className = 'liq-credit';
+    c.innerHTML = 'Match results via <a href="https://liquipedia.net" target="_blank" rel="noopener">Liquipedia</a> &middot; CC BY-SA 3.0';
+    host.appendChild(c);
+  });
 }
 
 /* ---- SUBSTACK AUTO-PULL ---------------------------------- */
@@ -379,7 +422,7 @@ function handleSub() {
 
 /* ---- BOOT ------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme(); fillChrome(); initHome(); initAbout();
+  initTheme(); fillChrome(); initHome(); initAbout(); hydrateResults();
   if (document.getElementById('teams-content')) { initTeamsPage(); }
   if (document.getElementById('board-content')) { initBoardControls(); renderBoard('board-content'); renderFloor('board-floor'); renderMiniStats('board-mini-stats'); }
 });

@@ -7,16 +7,21 @@
 <title>The Big Board | GRIT</title>
 <link rel="icon" type="image/png" href="grit-icon.png">
 <link rel="apple-touch-icon" href="grit-icon-180.png">
-<meta name="theme-color" content="#0a0a0c">
+<meta name="theme-color" content="#000000">
 <script>(function(){try{var t=localStorage.getItem('grit-theme');if(!t){t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=UnifrakturCook:wght@700&family=Newsreader:ital,opsz,wght@0,16..72,400;0,16..72,500;1,16..72,400;1,16..72,500&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="masthead">
   <div class="wrap mast-center">
+    <div class="issue-line">
+      <span class="no">Issue No. 01</span><span class="sep"></span>
+      <span data-today></span><span class="sep"></span>
+      <span>Independent NA Counter-Strike</span>
+    </div>
     <a href="index.html" class="mast-brand"><img class="mast-wordmark" src="grit-wordmark.png" alt="GRIT"></a>
     <div class="mast-text">
       <div class="mast-meaning">Grind. Read. Improve. Track.</div>
@@ -26,13 +31,13 @@
 </header>
 <nav class="strip" aria-label="Main">
   <div class="wrap">
-    <a href="index.html">Home</a><a href="teams.html">Teams</a><a href="board.html" class="active">Board</a><a href="about.html">About</a>
+    <a href="index.html">Home</a><a href="teams.html">Rankings</a><a href="board.html" class="active">Big Board</a><a href="about.html">About</a>
     <a class="external" data-substack-href href="#" target="_blank" rel="noopener">Subscribe &rarr;</a>
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme"><span data-theme-label>Light</span></button>
   </div>
 </nav>
 <main class="page">
-  <div class="section-head"><span class="eyebrow">/ The big board</span><h2>NA Prospect Ranking</h2><span class="rule"></span></div>
+  <div class="section-head"><span class="eyebrow">Scouting Report</span><h2>The Big Board</h2><span class="rule"></span></div>
   <p style="font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.03em;line-height:1.6;margin:-4px 0 14px;max-width:640px;">Every player here clears the scouting floor and is ranked by how ready they are to be signed. Filter by role or division to find a fit.</p>
   <div class="legend"><div class="glass legend-card"><span class="legend-tier">S</span><span class="legend-name">Pro-Ready</span><div class="legend-desc">Should have a contract right now.</div></div><div class="glass legend-card"><span class="legend-tier">A</span><span class="legend-name">Breakout</span><div class="legend-desc">An org signing is coming.</div></div><div class="glass legend-card"><span class="legend-tier">B</span><span class="legend-name">Prospect</span><div class="legend-desc">Pro trajectory confirmed, needs time.</div></div><div class="glass legend-card"><span class="legend-tier">C</span><span class="legend-name">Radar</span><div class="legend-desc">Real upside, not yet proven.</div></div></div>
   <div class="controls" role="search" aria-label="Filter prospects">
@@ -43,13 +48,13 @@
   </div>
   <div id="board-content"></div>
 
-  <div class="section-head"><span class="eyebrow">/ The standard</span><h2>The Scouting Floor</h2><span class="rule"></span></div>
+  <div class="section-head"><span class="eyebrow">The Standard</span><h2>The Scouting Floor</h2><span class="rule"></span></div>
   <div class="floor-wrap">
     <div class="glass hud floor-box" id="board-floor"></div>
     <div class="mini-stats" id="board-mini-stats" style="align-self:start;"></div>
   </div>
 
-  <div class="section-head"><span class="eyebrow">/ Subscribe</span><h2>Get It First</h2><span class="rule"></span></div>
+  <div class="section-head"><span class="eyebrow">The Edition</span><h2>Get It First</h2><span class="rule"></span></div>
   <div class="glass hud sub-box"><span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
     <h3>The Report, In Your <em>Inbox.</em></h3>
     <p class="sub-deck">Rankings, prospect drops, and the NA scene digest &mdash; free, every week on Substack.</p>
