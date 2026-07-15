@@ -12,23 +12,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
-<header class="masthead">
-  <div class="wrap mast-center">
-    <div class="issue-line">
-      <span class="no">Issue No. 01</span><span class="sep"></span>
-      <span data-today></span><span class="sep"></span>
-      <span>Independent NA Counter-Strike</span>
-    </div>
-    <a href="index.html" class="mast-brand"><img class="mast-wordmark" src="grit-wordmark.png" alt="GRIT"></a>
-    <div class="mast-text">
-      <div class="mast-meaning">Grind. Read. Improve. Track.</div>
-    </div>
-    <div class="mast-tagline" data-site-tagline></div>
-  </div>
-</header>
 <nav class="strip" aria-label="Main">
   <div class="wrap">
     <a href="index.html" class="brand-link">GRIT</a><a href="index.html" class="active">Home</a><a href="teams.html">Rankings</a><a href="board.html">Board</a><a href="about.html">About</a>
@@ -36,18 +22,27 @@
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme"><span data-theme-label>Light</span></button>
   </div>
 </nav>
-<main class="page">
-  <div id="home-hero" class="hero">
-    <div class="hero-lead">
-      <div class="lead-eyebrow">Issue 01</div>
-      <h1 class="lead-title">North American<br>Counter-Strike</h1>
-      <div class="lead-cta">
-        <a class="btn" href="board.html">The Board</a>
-        <a class="btn btn-ghost" data-substack-href href="#" target="_blank" rel="noopener">Subscribe</a>
-      </div>
-      <span class="cover-scroll" aria-hidden="true"></span>
+<header class="masthead cover">
+  <div class="wrap cover-inner">
+    <div class="issue-line">
+      <span class="no">Issue 01</span><span class="sep"></span>
+      <span data-today></span><span class="sep"></span>
+      <span>North America</span>
     </div>
-    <figure class="cover-figure"><img src="grit-g.png" alt="GRIT"><figcaption class="figure-cap">Fig. 01 &mdash; The Mark</figcaption></figure>
+    <a href="index.html" class="mast-brand"><img class="mast-wordmark" src="grit-wordmark.png" alt="GRIT"></a>
+    <h1 class="cover-title">North American<br>Counter-Strike</h1>
+    <div class="cover-actions">
+      <a class="btn" href="teams.html">The Rankings</a>
+      <a class="btn btn-ghost" data-substack-href href="#" target="_blank" rel="noopener">Subscribe</a>
+    </div>
+    <span class="cover-scroll" aria-hidden="true"></span>
+  </div>
+</header>
+<main class="page">
+  <figure class="cover-figure"><img src="grit-g.png" alt="GRIT"><figcaption class="figure-cap">Fig. 01 &mdash; The Mark</figcaption></figure>
+
+  <div class="section-head"><span class="eyebrow">This Issue</span><h2>On The Cover</h2><span class="rule"></span></div>
+  <div id="home-hero" class="hero">
     <div class="hero-side">
       <div class="glass hud hud-card" id="home-feat-team"></div>
       <div class="glass hud hud-card" id="home-feat-player"></div>
@@ -92,7 +87,7 @@
     <div class="footer-copy">&copy; <span data-year>2026</span> GRIT &middot; Grind. Read. Improve. Track. &middot; Independent NA Counter-Strike coverage &middot; readgrit.us</div>
   </div>
 </footer>
-<script src="data.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="data.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
