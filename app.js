@@ -73,6 +73,7 @@ function logoOrMono(o) {
     ? `<div class="r-mono has-img">${mono}<img class="r-logo" src="${esc(o.logo)}" alt="${esc(o.name || o.handle)}" loading="lazy" onerror="this.remove()"></div>`
     : `<div class="r-mono">${mono}</div>`;
 }
+const pad2 = (n) => (n == null ? '' : String(n).padStart(2, '0'));
 function gritTierFor(rank) {
   for (const t of GRIT_TIERS) if (rank <= t.max) return t;
   return GRIT_TIERS[GRIT_TIERS.length - 1];
@@ -87,31 +88,30 @@ function vrsRankMap() {
 }
 /* VRS rank shown beside a GRIT row, with the GRIT-vs-VRS delta */
 function vrsRefHtml(t, vrsRank) {
-  if (vrsRank == null) return '<div class="vrs-ref none">VRS&nbsp;&ndash;</div>';
+  if (vrsRank == null) return '<div class="vrs-ref none">VRS&nbsp;&mdash;</div>';
   const d = vrsRank - t.gritRank; // >0 means GRIT rates them higher than VRS
   let delta = '<span class="vd even">=</span>';
   if (d > 0) delta = `<span class="vd up">&#9650;${d}</span>`;
   else if (d < 0) delta = `<span class="vd down">&#9660;${-d}</span>`;
-  return `<div class="vrs-ref">VRS&nbsp;${vrsRank} ${delta}</div>`;
+  return `<div class="vrs-ref">VRS&nbsp;#${vrsRank} ${delta}</div>`;
 }
 /* official VRS board row */
 function vrsRow(t, rank) {
   return `<div class="rank-row vrs-row">
-    <div class="r-num${rank <= 3 ? ' top3' : ''}">${esc(rank)}</div>
+    <div class="r-num${rank <= 3 ? ' top3' : ''}">${esc(pad2(rank))}</div>
     ${logoOrMono(t)}
     <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     <div class="r-stat">${streakHtml(t.streak)}</div>
     <div class="r-points"><div class="v">${esc(t.vrsPoints)}</div><div class="l">VRS pts</div></div>
   </div>`;
 }
-/* GRIT board row */
+/* GRIT board row — 01 · M80 · ▲2 · VRS #3. Detail reveals on hover. */
 function gritRow(t, vmap) {
   return `<div class="rank-row grit-row">
-    <div class="r-num${t.gritRank <= 3 ? ' top3' : ''}">${esc(t.gritRank)}</div>
+    <div class="r-num${t.gritRank <= 3 ? ' top3' : ''}">${esc(pad2(t.gritRank))}</div>
     ${moveTag(t.gritRank, t.gritPrev)}${logoOrMono(t)}
     <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     ${vrsRefHtml(t, vmap.get(t.id))}
-    <div class="r-stat">${streakHtml(t.streak)}</div>
   </div>`;
 }
 function renderTeams(id, opts) {
@@ -168,30 +168,18 @@ function initTeamsPage() {
 }
 
 /* ---- BOARD (player ranking) ------------------------------ */
-/* A prospect is a profile, not a table row — draft-guide style. */
+/* Catalog line — 01 · SLAXZ- · ENTRY · 1.19 · ACTIVE */
 function boardRow(p) {
-  const stat = (v, l) => v ? `<div class="pc-stat"><div class="v">${esc(v)}</div><div class="l">${l}</div></div>` : '';
-  return `<article class="prospect-card">
-    <div class="pc-portrait">
-      <span class="pc-tier">${esc(p.tier)}</span>
-      <span class="pc-mono">${esc(monogram(p.handle))}</span>
-    </div>
-    <div class="pc-body">
-      <div class="pc-head">
-        <span class="pc-rank">${esc(p.rank)}</span>
-        <h3 class="pc-name">${esc(p.handle)}</h3>
-        ${moveTag(p.rank, p.prevRank)}
-      </div>
-      <div class="pc-meta">${esc(p.role)} &middot; ${esc(p.team || 'Free agent')} &middot; ${esc(p.division)}</div>
-      ${p.note ? `<p class="pc-note">${esc(p.note)}</p>` : ''}
-      <div class="pc-foot">
-        ${stat(p.rating, 'Rating')}${stat(p.adr, 'ADR')}${stat(p.elo, 'ELO')}
-        <span class="pc-spacer"></span>
-        <span class="status-pill ${esc(p.status)}">${esc(p.status)}</span>
-      </div>
-    </div>
-  </article>`;
+  return `<div class="rank-row board-row">
+    <div class="r-num${p.rank <= 3 ? ' top3' : ''}">${esc(pad2(p.rank))}</div>
+    ${moveTag(p.rank, p.prevRank)}
+    <div class="r-name"><div class="nm">${esc(p.handle)}</div><div class="sub">${esc(p.division)} &middot; ${esc(p.team || 'Free agent')}</div>${p.note ? `<div class="r-desc">${esc(p.note)}</div>` : ''}</div>
+    <div class="role-cell"><span class="role-tag">${esc(p.role)}</span></div>
+    <div class="r-stat">${p.rating ? `<div class="cell"><div class="v">${esc(p.rating)}</div></div>` : ''}</div>
+    <div class="status-cell"><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
+  </div>`;
 }
+
 const boardState = { q: '', role: 'all', div: 'all' };
 function boardPasses(p) {
   if (boardState.role !== 'all' && p.role !== boardState.role) return false;
@@ -392,7 +380,7 @@ function initHome() {
   if (teamWrap && t1) teamWrap.innerHTML = `${TICKS}
     <div class="hud-card-label">No.1 Team <span class="tag-no1">GRIT Ranking</span></div>
     <div class="feat-unit">
-      <div class="feat-rank">1</div>
+      <div class="feat-rank">01</div>
       <div class="feat-mono has-img">${esc(monogram(t1.name))}${t1.logo ? `<img src="${esc(t1.logo)}" alt="${esc(t1.name)}" onerror="this.remove()">` : ''}</div>
       <div class="feat-meta"><div class="feat-name">${esc(t1.name)}</div><div class="feat-detail">${esc(t1.region || 'NA')} &middot; ${esc((t1.roster || '').split('·')[0].trim())} +4</div></div>
       <div class="feat-points"><div class="v">${esc(t1.vrsPoints || '—')}</div><div class="l">VRS pts</div></div>

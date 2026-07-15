@@ -11,7 +11,7 @@
 <script>(function(){try{var t=localStorage.getItem('grit-theme');if(!t){t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -31,46 +31,43 @@
 </header>
 <nav class="strip" aria-label="Main">
   <div class="wrap">
-    <a href="index.html" class="active">Home</a><a href="teams.html">Rankings</a><a href="board.html">Big Board</a><a href="about.html">About</a>
+    <a href="index.html" class="brand-link">GRIT</a><a href="index.html" class="active">Home</a><a href="teams.html">Rankings</a><a href="board.html">Board</a><a href="about.html">About</a>
     <a class="external" data-substack-href href="#" target="_blank" rel="noopener">Subscribe &rarr;</a>
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme"><span data-theme-label>Light</span></button>
   </div>
 </nav>
 <main class="page">
   <div id="home-hero" class="hero">
-    <div class="glass hud hero-lead"><span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
-      <div class="lead-eyebrow">Cover Story</div>
-      <h1 class="lead-title">We rank the teams, scout the players, and keep the lights on for NA CS.</h1>
-      <div class="lead-body">
-        <p>GRIT is an independent power ranking and scouting desk for North American Counter-Strike &mdash; the coverage the region stopped getting, rebuilt by one person who still cares.</p>
-        <p>A team ranking you can trust, a prospect board with a published floor, and the results that move both. The writing lives on Substack.</p>
-      </div>
+    <div class="hero-lead">
+      <div class="lead-eyebrow">Issue 01</div>
+      <h1 class="lead-title">North American<br>Counter-Strike</h1>
       <div class="lead-cta">
-        <a class="btn" href="board.html">See the big board</a>
-        <a class="btn btn-ghost" data-substack-href href="#" target="_blank" rel="noopener">Read on Substack &rarr;</a>
+        <a class="btn" href="board.html">The Board</a>
+        <a class="btn btn-ghost" data-substack-href href="#" target="_blank" rel="noopener">Subscribe</a>
       </div>
+      <span class="cover-scroll" aria-hidden="true"></span>
     </div>
+    <figure class="cover-figure"><img src="grit-g.png" alt="GRIT"><figcaption class="figure-cap">Fig. 01 &mdash; The Mark</figcaption></figure>
     <div class="hero-side">
-      <figure class="hero-figure"><img src="grit-g.png" alt="GRIT"></figure>
       <div class="glass hud hud-card" id="home-feat-team"></div>
       <div class="glass hud hud-card" id="home-feat-player"></div>
-      <div class="mini-stats" id="home-mini-stats"></div>
     </div>
+    <div class="mini-stats" id="home-mini-stats"></div>
   </div>
 
-  <div class="section-head"><span class="eyebrow">Power Rankings</span><h2>The Best in North America</h2><span class="rule"></span><a class="link" href="teams.html">Full ranking &rarr;</a></div>
+  <div class="section-head"><span class="eyebrow">Rankings</span><h2>The Best in North America</h2><span class="rule"></span><a class="link" href="teams.html">Full ranking &rarr;</a></div>
   <div id="home-teams"></div>
 
-  <div class="section-head"><span class="eyebrow">Scouting Report</span><h2>The Big Board</h2><span class="rule"></span><a class="link" href="board.html">Full board &rarr;</a></div>
+  <div class="section-head"><span class="eyebrow">Board</span><h2>The Big Board</h2><span class="rule"></span><a class="link" href="board.html">Full board &rarr;</a></div>
   <div id="home-board"></div>
 
-  <div class="section-head"><span class="eyebrow">The Results</span><h2>Around North America</h2><span class="rule"></span></div>
+  <div class="section-head"><span class="eyebrow">Results</span><h2>Around North America</h2><span class="rule"></span></div>
   <div class="results-strip" id="home-results"></div>
 
-  <div class="section-head"><span class="eyebrow">The Notebook</span><h2>Latest Dispatches</h2><span class="rule"></span><a class="link" data-substack-href href="#" target="_blank" rel="noopener">All posts &rarr;</a></div>
+  <div class="section-head"><span class="eyebrow">Latest</span><h2>Dispatches</h2><span class="rule"></span><a class="link" data-substack-href href="#" target="_blank" rel="noopener">All posts &rarr;</a></div>
   <div class="posts-grid" id="home-posts"></div>
 
-  <div class="section-head"><span class="eyebrow">The Edition</span><h2>Get It First</h2><span class="rule"></span></div>
+  <div class="section-head"><span class="eyebrow">Subscribe</span><h2>Get It First</h2><span class="rule"></span></div>
   <div class="glass hud sub-box"><span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
     <h3>The Report, In Your <em>Inbox.</em></h3>
     <p class="sub-deck">Rankings, prospect drops, and the NA scene digest &mdash; free, every week on Substack.</p>
