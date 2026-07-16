@@ -63,6 +63,34 @@ const ABOUT = {
 };
 
 
+
+/* ---- FEATURED EVENT ---------------------------------------
+   The one event GRIT is putting its weight behind. Set live:false
+   to hide the block. Facts below are from nstlga.gg/league
+   (checked 16 Jul 2026). Update `tag` when the registration state
+   changes — it is the field that goes stale fastest.
+   ---------------------------------------------------------- */
+const EVENT = {
+  live: true,
+  tag: "Waitlist open \u00b7 closes 31 July",
+  name: "NSTLGA League Season 2",
+  deck: "The biggest open league in North American Counter-Strike. 64 teams, $10,000, three stages, and \u2014 the part that matters \u2014 it is VRS enabled. Win here and it moves you on the same board the Major invites come off. The paid slots are gone, but the waitlist is live until 31 July, and waitlisted teams pay nothing unless they get in.",
+  facts: [
+    { k: "Prize pool", v: "$10,000" },
+    { k: "Team cap",   v: "64" },
+    { k: "Seeded on",  v: "VRS \u00b7 3 Aug" },
+    { k: "Playoffs",   v: "Sept 9\u201313" }
+  ],
+  note: "Three stages: Ruby & Sapphire conferences through August (Bo1 round robin, 56-team cap), a 16-team Swiss group stage 2\u20136 September, then a top-eight double-elimination playoff 9\u201313 September with a Bo5 grand final and no map advantage. All eight playoff teams get paid; first takes $5,000. The pool scales with signups ($1,250 at eight teams, $10,000 at 64). Hosted on FACEIT, open to US and Canadian teams, VRS-enabled for groups and playoffs. Stage 2 pre-seeds the top eight VRS teams as of 3 August.",
+  href: "https://www.nstlga.gg/league",
+  cta: "Event details",
+  links: [
+    { label: "Join the waitlist", href: "https://forms.gle/7MJBmFXrvM5unviTA" },
+    { label: "Registered teams",  href: "https://docs.google.com/spreadsheets/d/1Gt7aF330tjO8P4ItXR9HrtB2B1GapibqsHLGXWrgy_I/edit?usp=sharing" },
+    { label: "Discord",           href: "https://discord.gg/myVtB58C35" }
+  ]
+};
+
 /* ---- TEAM BOARD (VRS + GRIT) ------------------------------ */
 /* ONE list, TWO rankings. The Teams page toggles between them.
    - VRS:  official HLTV Americas VRS points (NA teams), Jun 2026.

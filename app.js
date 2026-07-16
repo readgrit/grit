@@ -378,6 +378,31 @@ function initHeroSub() {
   });
 }
 
+/* Featured event — GRIT putting its weight behind one thing. */
+function renderEvent(id) {
+  const el = document.getElementById(id); if (!el) return;
+  if (typeof EVENT === 'undefined' || !EVENT.live) { el.remove(); return; }
+  el.innerHTML = `
+    <div class="ev-head">
+      <span class="ev-tag">${esc(EVENT.tag)}</span>
+      <span class="ev-rule"></span>
+    </div>
+    <div class="ev-body">
+      <div class="ev-main">
+        <h3 class="ev-name">${esc(EVENT.name)}</h3>
+        <p class="ev-deck">${esc(EVENT.deck)}</p>
+        <div class="ev-actions">
+          <a class="btn ev-cta" href="${esc(EVENT.href)}" target="_blank" rel="noopener">${esc(EVENT.cta)}</a>
+          ${(EVENT.links || []).map(l => `<a class="ev-link" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}
+        </div>
+      </div>
+      <div class="ev-facts">
+        ${EVENT.facts.map(f => `<div class="ev-fact"><div class="v">${esc(f.v)}</div><div class="l">${esc(f.k)}</div></div>`).join('')}
+      </div>
+    </div>
+    <p class="ev-note">${esc(EVENT.note)}</p>`;
+}
+
 /* ---- SCOUTING FLOOR + MINI STATS ------------------------- */
 function renderFloor(id) {
   const el = document.getElementById(id); if (!el) return;
@@ -446,6 +471,7 @@ function initHome() {
   renderResults('home-results', 4);
   loadPosts('home-posts', 3);
   loadLead('home-lead');
+  renderEvent('home-event');
   initHeroSub();
 }
 
