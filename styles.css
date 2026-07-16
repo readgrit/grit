@@ -702,3 +702,124 @@ footer { padding: var(--s5) 0 var(--s5); }
 .cover-title { font-size: clamp(34px, 5.6vw, 82px); }
 .cover-inner .cover-scroll { height: clamp(34px, 6vh, 64px); margin: 0; }
 @media (max-width: 700px) { .cover-inner { min-height: calc(100svh - 55px); } }
+
+/* ==========================================================================
+   DEVICE OPTIMIZATION — phone / tablet / laptop / desktop
+   Principles:
+   1. Uppercase micro-tracking is for SINGLE-LINE LABELS only.
+      Multi-line copy gets real size, normal case, real line-height.
+   2. Type scales fluidly with the viewport (clamp), never fixed-tiny.
+   3. Touch targets >= 44px. Detail reachable without hover.
+   ========================================================================== */
+
+/* ---- 1. Readable copy everywhere (was tracked micro-caps) -------------- */
+.lede-note, .sub-deck, .result-note, .legend-desc, .floor-intro, .pillar .pd, .about-hero .lede {
+  text-transform: none;
+  letter-spacing: .005em;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.lede-note { font-size: clamp(13px, 1.05vw, 15px); line-height: 1.75; max-width: 68ch; }
+.sub-deck  { font-size: clamp(13px, 1.05vw, 15px); line-height: 1.8; color: var(--muted); max-width: 50ch; }
+.result-note { font-size: clamp(12px, .95vw, 13px); line-height: 1.65; color: var(--muted); }
+.legend-desc { font-size: clamp(12px, .95vw, 13px); line-height: 1.6; color: var(--muted); }
+.floor-intro { font-size: clamp(13px, 1vw, 14.5px); line-height: 1.7; color: var(--muted); }
+.pillar .pd  { font-size: clamp(12.5px, 1vw, 13.5px); line-height: 1.7; color: var(--muted); }
+.about-hero .lede { font-size: clamp(15px, 1.5vw, 19px); line-height: 1.75; }
+.post-excerpt { font-size: clamp(13px, 1vw, 14px); line-height: 1.7; }
+.about-block p { font-size: clamp(13.5px, 1.1vw, 15px); line-height: 1.8; }
+.footer-copy { text-transform: none; letter-spacing: .01em; font-size: 11px; line-height: 1.8; }
+
+/* ---- 2. Fluid label scale (single-line labels keep the aesthetic) ------ */
+.section-head .eyebrow, .lead-eyebrow, .about-kicker {
+  font-size: clamp(9.5px, .78vw, 10.5px);
+  letter-spacing: clamp(.18em, .5vw, .46em);
+  padding-left: 0;
+}
+.issue-line { font-size: clamp(9px, .72vw, 10px); letter-spacing: clamp(.16em, .45vw, .42em); padding-left: 0; }
+.mast-meaning { font-size: clamp(9px, .7vw, 10px); letter-spacing: clamp(.2em, .55vw, .58em); padding-left: 0; }
+.hud-card-label, .feat-detail, .feat-points .l, .mini-stat .l, .r-stat .l, .r-points .l,
+.post-cat, .post-meta, .legend-name, .pillar .pn, .footer-link, .footer-title,
+.role-tag, .status-pill, .vrs-ref, .sub-fine, .liq-credit, .figure-cap, .tier-band .td {
+  font-size: clamp(9px, .72vw, 10px);
+  letter-spacing: clamp(.14em, .4vw, .3em);
+}
+.btn, .sub-go, .btn-ghost, .vt, .chip, .div-select, .search-field input, .theme-toggle {
+  font-size: clamp(9.5px, .75vw, 10.5px);
+  letter-spacing: clamp(.16em, .42vw, .34em);
+}
+nav.strip a { font-size: clamp(9.5px, .75vw, 10.5px); letter-spacing: clamp(.2em, .5vw, .46em); }
+
+/* ---- 3. Touch targets ------------------------------------------------- */
+@media (pointer: coarse) {
+  .vt, .chip, .div-select { min-height: 46px; display: inline-flex; align-items: center; }
+  .btn, .sub-go, .btn-ghost { min-height: 48px; }
+  nav.strip a { min-height: 48px; display: inline-flex; align-items: center; }
+  .theme-toggle { min-height: 40px; }
+  .footer-link { padding: 6px 0; }
+}
+
+/* ---- 4. Detail reachable without hover (tap to open) ------------------- */
+.rank-row.is-tappable { cursor: pointer; }
+.rank-row.open .r-name .sub { max-height: 60px; opacity: 1; margin-top: 10px; }
+.rank-row.open .r-desc { max-height: 140px; opacity: 1; margin-top: 8px; }
+.row-more {
+  display: none; width: 22px; height: 22px; align-items: center; justify-content: center;
+  border: 1px solid var(--line-2); color: var(--muted); font-size: 11px; line-height: 1;
+  transition: transform .4s var(--ease), color .4s var(--ease);
+}
+.rank-row.open .row-more { transform: rotate(45deg); color: var(--ink); }
+@media (pointer: coarse) {
+  .row-more { display: inline-flex; }
+  .grit-row { grid-template-columns: 42px 26px 1fr auto 22px; }
+  .vrs-row  { grid-template-columns: 42px 1fr auto 22px; }
+  .board-row { grid-template-columns: 42px 24px 1fr auto 22px; }
+  .rank-row { min-height: 84px; align-items: center; }
+  .rank-row.open { align-items: start; padding-top: 18px; padding-bottom: 18px; }
+  .rank-row.open .r-num, .rank-row.open .r-move, .rank-row.open .vrs-ref,
+  .rank-row.open .row-more, .rank-row.open .role-cell, .rank-row.open .status-cell { padding-top: 4px; }
+  .r-desc { letter-spacing: .01em; text-transform: none; font-size: 13px; line-height: 1.6; }
+  .r-name .sub { letter-spacing: .12em; font-size: 9.5px; }
+}
+
+/* ---- 5. Tablet (portrait + landscape) --------------------------------- */
+@media (min-width: 701px) and (max-width: 1024px) {
+  :root { --gut: 32px; }
+  .legend, .results-strip { grid-template-columns: repeat(2, 1fr); }
+  .posts-grid { grid-template-columns: repeat(2, 1fr); }
+  .posts-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .pillars { grid-template-columns: repeat(2, 1fr); }
+  .mini-stats { grid-template-columns: repeat(4, 1fr); }
+  #home-hero .hero-side { grid-template-columns: 1fr 1fr; }
+  .grit-row { grid-template-columns: 52px 30px 34px 1fr auto; }
+  .rank-row { min-height: 88px; }
+}
+
+/* ---- 6. Phone ---------------------------------------------------------- */
+@media (max-width: 700px) {
+  body { font-size: 15px; }
+  .cover-title { font-size: clamp(32px, 9.4vw, 46px); line-height: .94; max-width: 12ch; }
+  .cover-actions { width: 100%; gap: 0; flex-direction: column; }
+  .cover-actions .btn { width: 100%; }
+  .section-head h2 { font-size: clamp(26px, 7.4vw, 34px); }
+  .section-head { grid-template-columns: 1fr; }
+  .section-head .link { grid-column: 1; justify-self: start; margin-top: 14px; }
+  .r-num { font-size: 22px; }
+  .r-name .nm { font-size: 17px; }
+  .mini-stat .v { font-size: 30px; }
+  .sub-box { padding: var(--s6) 20px; }
+  .controls { gap: 0; }
+  .search-field { width: 100%; flex: 1 0 100%; border-bottom: 1px solid var(--line-2); }
+  .filter-group { width: 100%; }
+  .chip { flex: 1; justify-content: center; border-left: none; border-right: 1px solid var(--line-2); }
+  .div-select { width: 100%; border-left: none; border-top: 1px solid var(--line-2); }
+}
+
+/* ---- 7. Large desktop -------------------------------------------------- */
+@media (min-width: 1600px) { :root { --gut: 64px; } }
+
+/* cover height derives from the REAL nav height (set by app.js), with a
+   sane fallback if JS hasn't run yet */
+:root { --nav-h: 61px; }
+.cover-inner { min-height: calc(100svh - var(--nav-h)); }
+@media (max-width: 700px) { .cover-inner { min-height: calc(100svh - var(--nav-h)); } }

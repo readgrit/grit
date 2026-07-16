@@ -103,6 +103,7 @@ function vrsRow(t, rank) {
     <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     <div class="r-stat">${streakHtml(t.streak)}</div>
     <div class="r-points"><div class="v">${esc(t.vrsPoints)}</div><div class="l">VRS pts</div></div>
+    <span class="row-more" aria-hidden="true">+</span>
   </div>`;
 }
 /* GRIT board row — 01 · M80 · ▲2 · VRS #3. Detail reveals on hover. */
@@ -112,6 +113,7 @@ function gritRow(t, vmap) {
     ${moveTag(t.gritRank, t.gritPrev)}${logoOrMono(t)}
     <div class="r-name"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.roster || t.region || '')}</div>${t.note ? `<div class="r-desc">${esc(t.note)}</div>` : ''}</div>
     ${vrsRefHtml(t, vmap.get(t.id))}
+    <span class="row-more" aria-hidden="true">+</span>
   </div>`;
 }
 function renderTeams(id, opts) {
@@ -177,6 +179,7 @@ function boardRow(p) {
     <div class="role-cell"><span class="role-tag">${esc(p.role)}</span></div>
     <div class="r-stat">${p.rating ? `<div class="cell"><div class="v">${esc(p.rating)}</div></div>` : ''}</div>
     <div class="status-cell"><span class="status-pill ${esc(p.status)}">${esc(p.status)}</span></div>
+    <span class="row-more" aria-hidden="true">+</span>
   </div>`;
 }
 
@@ -408,9 +411,46 @@ function handleSub() {
   window.open(email ? SITE.substack + '?email=' + encodeURIComponent(email) : SITE.substack, '_blank', 'noopener');
 }
 
+/* The cover fills exactly one screen, so it must know the real nav height
+   (which grows on touch devices where tap targets are larger). */
+function initNavHeight() {
+  const nav = document.querySelector('nav.strip');
+  if (!nav) return;
+  const set = () => document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+  set();
+  if (window.ResizeObserver) new ResizeObserver(set).observe(nav);
+  window.addEventListener('resize', set, { passive: true });
+  window.addEventListener('orientationchange', set);
+}
+
+/* Touch devices have no hover, so rows open on tap. Desktop is untouched. */
+function initRowTaps() {
+  if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) return;
+  document.addEventListener('click', e => {
+    const row = e.target.closest('.rank-row');
+    if (!row || e.target.closest('a, button, input, select')) return;
+    const wasOpen = row.classList.contains('open');
+    row.parentElement.querySelectorAll('.rank-row.open').forEach(r => r.classList.remove('open'));
+    if (!wasOpen) row.classList.add('open');
+  });
+  const mark = () => document.querySelectorAll('.rank-row').forEach(r => {
+    if (r.querySelector('.r-desc, .sub')) {
+      r.classList.add('is-tappable');
+      if (!r.hasAttribute('tabindex')) { r.setAttribute('tabindex', '0'); r.setAttribute('role', 'button'); }
+    }
+  });
+  mark();
+  new MutationObserver(mark).observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('rank-row')) {
+      e.preventDefault(); e.target.classList.toggle('open');
+    }
+  });
+}
+
 /* ---- BOOT ------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme(); fillChrome(); initHome(); initAbout(); hydrateResults();
+  initTheme(); fillChrome(); initHome(); initAbout(); hydrateResults(); initRowTaps(); initNavHeight();
   if (document.getElementById('teams-content')) { initTeamsPage(); }
   if (document.getElementById('board-content')) { initBoardControls(); renderBoard('board-content'); renderFloor('board-floor'); renderMiniStats('board-mini-stats'); }
 });
