@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 <nav class="strip" aria-label="Main">
@@ -22,36 +22,45 @@
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme"><span data-theme-label>Light</span></button>
   </div>
 </nav>
-<header class="masthead cover">
-  <div class="wrap cover-inner">
+<header class="masthead">
+  <div class="wrap mast-bar">
+    <a href="index.html" class="mast-brand"><img class="mast-wordmark" src="grit-wordmark.png" alt="GRIT"></a>
     <div class="issue-line">
       <span class="no">Issue 01</span><span class="sep"></span>
       <span data-today></span><span class="sep"></span>
       <span>North America</span>
     </div>
-    <a href="index.html" class="mast-brand"><img class="mast-wordmark" src="grit-wordmark.png" alt="GRIT"></a>
-    <h1 class="cover-title">North American<br>Counter-Strike</h1>
-    <div class="cover-actions">
-      <a class="btn" href="teams.html">The Rankings</a>
-      <a class="btn btn-ghost" data-substack-href href="#" target="_blank" rel="noopener">Subscribe</a>
-    </div>
-    <span class="cover-scroll" aria-hidden="true"></span>
   </div>
 </header>
-<main class="page">
-  <figure class="cover-figure"><img src="grit-g.png" alt="GRIT"><figcaption class="figure-cap">Fig. 01 &mdash; The Mark</figcaption></figure>
 
-  <div class="section-head"><span class="eyebrow">This Issue</span><h2>On The Cover</h2><span class="rule"></span></div>
-  <div id="home-hero" class="hero">
-    <div class="hero-side">
+<section class="statement">
+  <div class="wrap statement-inner">
+    <p class="statement-kicker">The GRIT Ranking</p>
+    <h1 class="statement-line">North American Counter-Strike,<br><em>without the fluff.</em></h1>
+    <p class="statement-deck">Every NA team worth watching, ranked by someone who actually watches them. The prospects before the orgs find them. One honest read a week.</p>
+    <form class="statement-sub" id="hero-sub">
+      <input class="sub-input" type="email" placeholder="your@email.com" aria-label="Email address" required>
+      <button class="sub-go" type="submit">Read today&rsquo;s edition</button>
+    </form>
+    <p class="statement-fine">Free, every week on Substack. No spam, unsubscribe anytime.</p>
+  </div>
+</section>
+<main class="page">
+  <div class="section-head"><span class="eyebrow">The Big Story</span><h2>This Week</h2><span class="rule"></span></div>
+  <a class="lead-story" id="home-lead" href="#" target="_blank" rel="noopener"></a>
+
+  <div class="section-head"><span class="eyebrow">The Board</span><h2>Where NA Stands</h2><span class="rule"></span></div>
+  <section class="opening">
+    <div class="opening-main">
+      <div class="opening-label"><span>GRIT Top 5</span><a class="link" href="teams.html">Full ranking &rarr;</a></div>
+      <div id="home-teams" class="rank-table"></div>
+    </div>
+    <aside class="opening-side">
       <div class="glass hud hud-card" id="home-feat-team"></div>
       <div class="glass hud hud-card" id="home-feat-player"></div>
-    </div>
-    <div class="mini-stats" id="home-mini-stats"></div>
-  </div>
-
-  <div class="section-head"><span class="eyebrow">Rankings</span><h2>The Best in North America</h2><span class="rule"></span><a class="link" href="teams.html">Full ranking &rarr;</a></div>
-  <div id="home-teams"></div>
+      <div class="mini-stats" id="home-mini-stats"></div>
+    </aside>
+  </section>
 
   <div class="section-head"><span class="eyebrow">Board</span><h2>The Big Board</h2><span class="rule"></span><a class="link" href="board.html">Full board &rarr;</a></div>
   <div id="home-board"></div>
@@ -87,7 +96,7 @@
     <div class="footer-copy">&copy; <span data-year>2026</span> GRIT &middot; Grind. Read. Improve. Track. &middot; Independent NA Counter-Strike coverage &middot; readgrit.us</div>
   </div>
 </footer>
-<script src="data.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="data.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>

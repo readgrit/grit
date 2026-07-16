@@ -335,6 +335,49 @@ async function loadPosts(id, limit) {
   }
 }
 
+/* The Big Story — first item of the live Substack feed. Falls back to a
+   static invitation if the feed is unreachable, so the slot is never empty. */
+async function loadLead(id) {
+  const el = document.getElementById(id); if (!el) return;
+  el.classList.add('is-loading');
+  const fallback = () => {
+    el.href = SITE.substack;
+    el.innerHTML = `<div class="ls-body">
+        <div class="ls-cat">Dispatch</div>
+        <h3 class="ls-title">The weekly read on North American Counter-Strike</h3>
+        <p class="ls-excerpt">Rankings, prospect movement, and what actually mattered this week. Published on Substack.</p>
+        <div class="ls-meta">Read the latest &rarr;</div>
+      </div>`;
+    el.classList.remove('is-loading');
+  };
+  try {
+    const res = await fetch(SITE.rssProxy + encodeURIComponent(SITE.feed), { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('status ' + res.status);
+    const data = await res.json();
+    const it = data && data.items && data.items[0];
+    if (!it) throw new Error('no items');
+    const plain = (it.description || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    el.href = it.link || SITE.substack;
+    el.innerHTML = `<div class="ls-body">
+        <div class="ls-cat">Dispatch</div>
+        <h3 class="ls-title">${esc(it.title || 'Latest dispatch')}</h3>
+        <p class="ls-excerpt">${esc(plain.slice(0, 220))}${plain.length > 220 ? '&hellip;' : ''}</p>
+        <div class="ls-meta">${esc(fmtDate(it.pubDate))} &middot; Read the story &rarr;</div>
+      </div>`;
+    el.classList.remove('is-loading');
+  } catch (e) { fallback(); }
+}
+/* hero email box: hand the address to Substack rather than fake a signup */
+function initHeroSub() {
+  const f = document.getElementById('hero-sub'); if (!f) return;
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = f.querySelector('input').value.trim();
+    const base = SITE.substack.replace(/\/$/, '');
+    window.open(v ? base + '/subscribe?email=' + encodeURIComponent(v) : base, '_blank', 'noopener');
+  });
+}
+
 /* ---- SCOUTING FLOOR + MINI STATS ------------------------- */
 function renderFloor(id) {
   const el = document.getElementById(id); if (!el) return;
@@ -375,7 +418,7 @@ function initAbout() {
 
 /* ---- HOME ------------------------------------------------ */
 function initHome() {
-  const hero = document.getElementById('home-hero');
+  const hero = document.getElementById('home-teams') || document.getElementById('home-hero');
   if (!hero) return;
   const t1 = [...TEAMS].filter(t => t.gritRank != null).sort((a, b) => a.gritRank - b.gritRank)[0];
   const p1 = [...PROSPECTS].sort(byRank)[0];
@@ -402,6 +445,8 @@ function initHome() {
   renderBoard('home-board', { preview: true, limit: 5 });
   renderResults('home-results', 4);
   loadPosts('home-posts', 3);
+  loadLead('home-lead');
+  initHeroSub();
 }
 
 /* ---- SUBSCRIBE ------------------------------------------- */

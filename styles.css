@@ -823,3 +823,194 @@ nav.strip a { font-size: clamp(9.5px, .75vw, 10.5px); letter-spacing: clamp(.2em
 :root { --nav-h: 61px; }
 .cover-inner { min-height: calc(100svh - var(--nav-h)); }
 @media (max-width: 700px) { .cover-inner { min-height: calc(100svh - var(--nav-h)); } }
+
+/* ==========================================================================
+   LANDING PAGE — content first
+   No full-screen cover. The brand is a bar; the ranking is the hero.
+   ========================================================================== */
+.mast-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+  padding: var(--s3) var(--gut);
+}
+.mast-bar .mast-wordmark { height: clamp(30px, 2.6vw, 40px); margin: 0; }
+.mast-bar .issue-line { justify-content: flex-end; }
+
+/* opening: ranking left, this-issue rail right */
+.opening {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .95fr);
+  gap: var(--s4); align-items: start; padding-top: var(--s4);
+}
+.opening-main { min-width: 0; }
+.opening-side { display: grid; gap: var(--s2); position: sticky; top: calc(var(--nav-h) + var(--s2)); }
+.opening-side .mini-stats { grid-template-columns: 1fr 1fr; }
+.opening-side .mini-stat { padding: var(--s3) var(--s3); }
+.opening-side .mini-stat .v { font-size: clamp(24px, 2vw, 30px); }
+.opening-side .hud-card { padding: var(--s3); }
+
+/* section head that opens a page needs less air above it */
+.section-head.flush { padding-top: 0; margin-bottom: var(--s3); }
+
+/* the opening ranking rows sit tighter than the full ranking page */
+.opening .rank-row { min-height: 82px; }
+.opening .rank-row .r-desc { display: none; }        /* keep the snapshot clean */
+
+@media (max-width: 1024px) {
+  .opening { grid-template-columns: 1fr; gap: var(--s4); }
+  .opening-side { position: static; grid-template-columns: 1fr 1fr; }
+  .opening-side .mini-stats { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 700px) {
+  .mast-bar { flex-direction: column; align-items: flex-start; gap: var(--s2); padding: var(--s3) var(--gut); }
+  .mast-bar .issue-line { justify-content: flex-start; }
+  .opening-side { grid-template-columns: 1fr; }
+  .opening-side .mini-stats { grid-template-columns: 1fr 1fr; }
+  .opening { padding-top: var(--s3); }
+}
+
+/* ==========================================================================
+   LOGOS ON EVERY DEVICE
+   Team logos are the only colour on a monochrome site — they must never be
+   the thing that gets dropped to save width. Restores the logo column on
+   phones/tablets and buys the space back from gaps + the stat column.
+   ========================================================================== */
+@media (max-width: 700px) {
+  .grit-row .r-logo, .grit-row .r-mono,
+  .vrs-row .r-logo, .vrs-row .r-mono { display: grid; }
+  .grit-row { grid-template-columns: 26px 30px 1fr auto; }
+  .vrs-row  { grid-template-columns: 26px 30px 1fr auto; }
+  .board-row { grid-template-columns: 26px 30px 1fr auto; }
+  .rank-row { gap: 10px; padding-left: 14px; padding-right: 14px; }
+  .r-logo, .r-mono { width: 30px; height: 30px; font-size: 8.5px; }
+  .r-num { font-size: 19px; }
+  .r-move { display: none; }                    /* movement rides in the VRS cell */
+  .r-name .nm { font-size: 15.5px; line-height: 1.1; }
+  .vrs-ref { font-size: 9px; letter-spacing: .08em; }
+}
+/* touch grids (tablet + phone) keep the logo AND the tap affordance */
+@media (pointer: coarse) {
+  .grit-row .r-logo, .grit-row .r-mono,
+  .vrs-row .r-logo, .vrs-row .r-mono,
+  .board-row .r-logo, .board-row .r-mono { display: grid; }
+  .grit-row { grid-template-columns: 30px 34px 1fr auto 18px; }
+  .vrs-row  { grid-template-columns: 30px 34px 1fr auto 18px; }
+  .board-row { grid-template-columns: 30px 34px 1fr auto 18px; }
+  .row-more { width: 18px; height: 18px; font-size: 10px; }
+}
+@media (pointer: coarse) and (min-width: 701px) {
+  .grit-row { grid-template-columns: 44px 26px 36px 1fr auto 20px; }
+  .vrs-row  { grid-template-columns: 44px 36px 1fr auto 92px 20px; }
+  .board-row { grid-template-columns: 44px 26px 1fr auto auto 20px; }
+  .grit-row .r-move, .board-row .r-move { display: block; }
+  .r-logo, .r-mono { width: 36px; height: 36px; }
+}
+
+/* ==========================================================================
+   MAGAZINE IDENTITY
+   Black · cream · muted off-white cards · ONE orange accent · subtle grain.
+   Orange is a pointer, never a surface. Cream is the ink, not white.
+   ========================================================================== */
+:root, [data-theme="dark"] {
+  --cream:   #F4F1EA;
+  --cream-2: #E7E2D6;
+  --orange:  #D97706;
+
+  --ink:      var(--cream);
+  --ink-soft: #BDB8AC;
+  --muted:    #8A857A;
+  --line:     rgba(244,241,234,0.18);
+  --line-2:   rgba(244,241,234,0.09);
+  --fill:     var(--cream);
+  --on-fill:  #000;
+  --accent:   var(--orange);
+  --up:       var(--cream);
+  --down:     #8A857A;
+}
+[data-theme="light"] {
+  --ink: #0B0B0B; --ink-soft: #2B2A27; --muted: #6B665C;
+  --bg: var(--cream); --bg-2: #EBE7DC; --surface: #FFFDF8; --surface-2: #E7E2D6;
+  --line: rgba(0,0,0,0.18); --line-2: rgba(0,0,0,0.09);
+  --fill: #0B0B0B; --on-fill: var(--cream);
+}
+
+/* subtle grain — barely there, kills the flat-digital feel */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="light"] body::after { opacity: .035; mix-blend-mode: multiply; }
+
+/* orange, used sparingly: eyebrows, the No.1 rank, the primary CTA */
+.section-head .eyebrow, .lead-eyebrow, .about-kicker, .post-cat, .ls-cat, .statement-kicker { color: var(--orange); }
+.r-num.top3, .feat-rank, .mini-stat .v.accent, .legend-tier, .pillar .pl, .issue-line .no {
+  background-image: none; -webkit-text-fill-color: currentColor; color: var(--orange);
+}
+.sub-go, .statement-sub .sub-go { background: var(--orange); border-color: var(--orange); color: #fff; }
+.sub-go:hover { background: var(--cream); border-color: var(--cream); color: #000; }
+
+/* ---- STATEMENT (the 5-second pitch) ----------------------------------- */
+.statement { border-bottom: 1px solid var(--line-2); }
+.statement-inner { padding: clamp(56px, 8vw, 108px) var(--gut) clamp(48px, 6vw, 84px); max-width: 1100px; }
+.statement-kicker {
+  font-size: clamp(9.5px, .78vw, 10.5px); font-weight: 600;
+  letter-spacing: clamp(.2em, .5vw, .42em); text-transform: uppercase; margin: 0 0 clamp(20px, 2.4vw, 30px);
+}
+.statement-line {
+  font-family: var(--f-display); font-weight: 400; text-transform: uppercase;
+  font-size: clamp(30px, 5.4vw, 76px); line-height: .94; letter-spacing: .004em;
+  margin: 0 0 clamp(18px, 2vw, 26px); color: var(--ink);
+}
+.statement-line em { font-style: normal; color: var(--orange); }
+.statement-deck {
+  font-size: clamp(14px, 1.25vw, 18px); line-height: 1.65; color: var(--ink-soft);
+  max-width: 56ch; margin: 0 0 clamp(26px, 3vw, 38px);
+}
+.statement-sub { display: flex; gap: 0; max-width: 520px; border: 1px solid var(--line); }
+.statement-sub .sub-input { flex: 1; padding: 15px 16px; border: none; }
+.statement-sub .sub-go { border: none; padding: 15px 22px; white-space: nowrap; min-height: 0; }
+.statement-fine {
+  font-size: 11px; letter-spacing: .02em; color: var(--muted); margin: 14px 0 0; text-transform: none;
+}
+
+/* ---- LEAD STORY (off-white card = the magazine moment) ----------------- */
+.lead-story {
+  display: block; background: var(--cream-2); color: #000;
+  border: 1px solid var(--cream-2); transition: transform .5s var(--ease);
+}
+.lead-story:hover { transform: translateY(-2px); }
+.lead-story.is-loading { opacity: .4; min-height: 220px; }
+.ls-body { padding: clamp(28px, 3.6vw, 56px); }
+.ls-cat {
+  font-size: clamp(9px, .72vw, 10px); font-weight: 600; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--orange);
+}
+.ls-title {
+  font-family: var(--f-display); font-weight: 400; text-transform: uppercase;
+  font-size: clamp(26px, 3.6vw, 54px); line-height: .98; letter-spacing: .004em;
+  margin: clamp(16px, 1.6vw, 22px) 0 clamp(12px, 1.2vw, 18px); color: #000; max-width: 22ch;
+}
+.ls-excerpt { font-size: clamp(13px, 1.05vw, 15.5px); line-height: 1.7; color: #2B2A27; max-width: 62ch; margin: 0; }
+.ls-meta {
+  font-size: clamp(9px, .72vw, 10px); font-weight: 600; letter-spacing: .26em;
+  text-transform: uppercase; color: #6B665C; margin-top: clamp(20px, 2vw, 30px);
+}
+[data-theme="light"] .lead-story { background: #0B0B0B; border-color: #0B0B0B; }
+[data-theme="light"] .ls-title { color: var(--cream); }
+[data-theme="light"] .ls-excerpt { color: #BDB8AC; }
+[data-theme="light"] .ls-meta { color: #8A857A; }
+
+/* opening label replaces the duplicate section head */
+.opening-label {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding-bottom: 14px; margin-bottom: 0; border-bottom: 1px solid var(--line);
+}
+.opening-label span {
+  font-size: clamp(9.5px, .75vw, 10.5px); font-weight: 600; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--ink);
+}
+
+@media (max-width: 700px) {
+  .statement-sub { flex-direction: column; }
+  .statement-sub .sub-go { width: 100%; padding: 16px; }
+  .statement-line { font-size: clamp(28px, 8.6vw, 40px); }
+}
